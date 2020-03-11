@@ -41,7 +41,7 @@ class Ae7qCallData(Ae7qData):
 class Ae7qCanadianCallData(Ae7qData):
     # http://ae7q.com/query/data/CallHistory.php?CALL=va2shf
     def __init__(self, tables: Sequence[Table], query: str):
-        url = base_url + "data/CallHistory.php?CALL=" + query
+        url = base_url + "data/FrnHistory.php?FRN=" + query
         super().__init__(tables, query, url)
 
         data = tables[0]
@@ -58,29 +58,29 @@ class Ae7qCanadianCallData(Ae7qData):
         self.grid_square = None
         self.qualifications = None
 
-        for row in data.rows[1:]:
-            if self.callsign is None and row.data[0] == "Callsign":
-                self.callsign = row.data[1]
-            elif self.given_names is None and row.data[0] == "Given Names":
-                self.given_names = row.data[1]
-            elif self.surname is None and row.data[0] == "Surname":
-                self.surname = row.data[1]
-            elif self.address is None and row.data[0] == "Street Address":
-                self.address = row.data[1]
-            elif self.locality is None and row.data[0] == "Locality":
-                self.locality = row.data[1]
-            elif self.province is None and row.data[0] == "Province":
-                self.province = row.data[1]
-            elif self.postal_code is None and row.data[0] == "Postal Code":
-                self.postal_code = row.data[1]
-            elif self.country is None and row.data[0] == "Country":
-                self.country = row.data[1]
-            elif self.region is None and row.data[0] == "Region":
-                self.region = row.data[1]
-            elif self.grid_square is None and row.data[0] == "Maidenhead":
-                self.grid_square = row.data[1]
-            elif self.qualifications is None and row.data[0] == "Qualifications":
-                self.qualifications = row.data[1]
+        for row in data[1:]:
+            if self.callsign is None and row[0] == "Callsign":
+                self.callsign = row[1]
+            elif self.given_names is None and row[0] == "Given Names":
+                self.given_names = row[1]
+            elif self.surname is None and row[0] == "Surname":
+                self.surname = row[1]
+            elif self.address is None and row[0] == "Street Address":
+                self.address = row[1]
+            elif self.locality is None and row[0] == "Locality":
+                self.locality = row[1]
+            elif self.province is None and row[0] == "Province":
+                self.province = row[1]
+            elif self.postal_code is None and row[0] == "Postal Code":
+                self.postal_code = row[1]
+            elif self.country is None and row[0] == "Country":
+                self.country = row[1]
+            elif self.region is None and row[0] == "Region":
+                self.region = row[1]
+            elif self.grid_square is None and row[0] == "Maidenhead":
+                self.grid_square = row[1]
+            elif self.qualifications is None and row[0] == "Qualifications":
+                self.qualifications = row[1]
 
 class Ae7qLicenseeData(Ae7qData):
     # http://ae7q.com/query/data/LicenseeIdHistory.php?ID=L01295086
@@ -89,7 +89,18 @@ class Ae7qLicenseeData(Ae7qData):
 
 class Ae7qFrnData(Ae7qData):
     # http://ae7q.com/query/data/FrnHistory.php?FRN=0016605636
-    pass
+    def __init__(self, tables: Sequence[Table], query: str):
+        url = base_url + "data/FrnHistory.php?FRN=" + query
+        super().__init__(tables, query, url)
+
+        self.frn_history = None
+        self.application_history = None
+
+        for table in tables:
+            if self.frn_history is None and isinstance(table, FrnHistoryTable):
+                self.frn_history = table
+            elif self.application_history is None and isinstance(table, VanityApplicationsHistoryTable):
+                self.application_history = table
 
 
 class Ae7qApplicationData(Ae7qData):

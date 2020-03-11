@@ -12,5 +12,14 @@ import ae7qparser
 call = input("call? ")
 
 calldata = ae7qparser.get_call(call)
-print(calldata)
-print(repr(calldata))
+
+print(calldata.tables[-1].csv)
+# print(calldata.tables[0])
+
+frn = input("frn? ")
+
+frndata = ae7qparser.get_frn(frn)
+
+print(type(frndata.tables[-1]))
+print(frndata.tables[-1].csv)
+# print(frndata.tables[0])

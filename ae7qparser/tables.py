@@ -76,6 +76,16 @@ class ApplicationsHistoryTable(Table):
     row_cls = ApplicationsHistoryRow
 
 
+class VanityApplicationsHistoryRow(ApplicationsHistoryRow):
+    def __init__(self, row_data: Sequence):
+        super().__init__(row_data)
+        self.applied_callsigns = row_data[9]
+
+
+class VanityApplicationsHistoryTable(Table):
+    row_cls = VanityApplicationsHistoryRow
+
+
 class EventCallsignRow(Row):
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -88,3 +98,22 @@ class EventCallsignRow(Row):
 
 class EventCallsignTable(Table):
     row_cls = EventCallsignRow
+
+
+class FrnHistoryRow(Row):
+    def __init__(self, row_data: Sequence):
+        super().__init__(row_data)
+        self.callsign = row_data[0]
+        self.region_state = row_data[1]
+        self.entity_name = row_data[2]
+        self.applicant_type = row_data[3]
+        self.operator_class = row_data[4]
+        self.license_status = row_data[5]
+        self.grant_date = row_data[6]
+        self.effective_date = row_data[7]
+        self.cancel_date = row_data[8]
+        self.expire_date = row_data[9]
+
+
+class FrnHistoryTable(Table):
+    row_cls = FrnHistoryRow

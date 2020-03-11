@@ -30,11 +30,11 @@ def get_call(callsign: str) -> Ae7qCallData:
     html = request.text
     soup = BeautifulSoup(html, features="html.parser")
 
-    tables = [table for table in soup.select("table.Database")]
+    tables = soup.find_all("table", "Database")
 
-    processed_tables = __process_tables(tables)
+    processed_tables = _parse_tables(tables)
 
-    parsed_tables = __parse_tables(processed_tables)
+    parsed_tables = _assign_call_tables(processed_tables)
 
     if callsign[0:2] in ca_pfx:
         return Ae7qCanadianCallData(parsed_tables, callsign)
@@ -47,42 +47,99 @@ def get_licensee_id(licensee_id: str) -> Ae7qLicenseeData:
 
 
 def get_frn(frn: str) -> Ae7qFrnData:
-    ...
+    url = base_url + "data/FrnHistory.php?FRN=" + frn
+    request = requests.get(url)
+
+    html = request.text
+    soup = BeautifulSoup(html, features="html.parser")
+
+    tables = soup.find_all("table", "Database")
+
+    processed_tables = _parse_tables(tables)
+
+    parsed_tables = _assign_frn_tables(processed_tables)
+
+    return Ae7qFrnData(parsed_tables, frn)
 
 
 ##### PRIVATE FUNCTIONS
-def __process_tables(tables: Sequence[element.Tag]) -> Sequence[Sequence]:
+def _parse_tables(tables: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
     parsed_tables = []
+
     for table in tables:
-        parsed_table = []
-        rows = [row for row in table.find_all("tr")]
-        for tr in rows:
-            row = []
-            for cell in tr.find_all(["th", "td"]):
-                cell_val = " ".join(cell.getText().split())
-                row.append(cell_val if cell_val else None)
-
-                # separate combined columns
-                if "colspan" in cell.attrs:
-                    try:
-                        if int(cell.attrs["colspan"]) > 1:
-                            for i in range(int(cell.attrs["colspan"]) - 1):
-                                row.append(row[-1])
-                    except ValueError:
-                        pass
-
-            # get rid of ditto marks by copying the contents from the previous row
-            for i, cell in enumerate(row):
-                if cell == "\"":
-                    row[i] = parsed_table[-1][i]
-            # add row to table
-            parsed_table += [row]
-        parsed_tables.append(parsed_table)
+        rows = table.find_all("tr")
+        parsed_tables.append(__parse_table_rows(rows))
 
     return parsed_tables
 
 
-def __parse_tables(tables: Sequence[Sequence]):
+def __parse_table_rows(table: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
+    rows = []
+    remainder = []
+
+    for tr in table:
+        row = []
+        next_remainder = []
+
+        idx = 0
+        for td in tr.find_all(["th", "td"]):
+            # process rowspan > 1
+            while remainder and remainder[0][0] <= idx:
+                prev_idx, prev_cell, prev_rowspan = remainder.pop(0)
+                row.append(prev_cell)
+                if prev_rowspan > 1:
+                    next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
+                idx += 1
+
+            cell = __get_cell_text(td)
+            try:
+                rowspan = int(td.attrs["rowspan"])
+            except (ValueError, KeyError): # catch %, attr not found
+                rowspan = 1
+            try:
+                colspan = int(td.attrs["colspan"])
+            except (ValueError, KeyError): # catch %, attr not found
+                colspan = 1
+
+            # handle colspan > 1
+            for x in range(colspan):
+                row.append(cell)
+                if rowspan > 1:
+                    next_remainder.append((idx, cell, rowspan - 1))
+                idx += 1
+
+            # get rid of ditto marks by copying the contents from the previous row
+            for i, cell in enumerate(row):
+                if cell == "\"":
+                    row[i] = rows[-1][i]
+
+        for prev_idx, prev_cell, prev_rowspan in remainder:
+            row.append(prev_cell)
+            if prev_rowspan > 1:
+                next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
+
+        rows.append(row)
+        remainder = next_remainder
+
+    while remainder:
+        next_remainder = []
+        row = []
+
+        for prev_idx, prev_cell, prev_rowspan in remainder:
+            row.append(prev_cell)
+            if rowspan > 1:
+                next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
+        rows.append(row)
+        remainder = next_remainder
+
+    return rows
+
+
+def __get_cell_text(cell: element.Tag) -> str:
+    return " ".join(cell.getText().split())
+
+
+def _assign_call_tables(tables: Sequence[Sequence]):
     out_tables = []
     for table in tables:
         # ConditionsTable
@@ -105,6 +162,24 @@ def __parse_tables(tables: Sequence[Sequence]):
         # EventCallsignTable
         elif len(table[0]) == 5 and table[0][0] == "Start Date":
             out_tables.append(EventCallsignTable(table[1:]))
+
+        # otherwise, Table
+        else:
+            out_tables.append(Table(table))
+
+    return out_tables
+
+
+def _assign_frn_tables(tables: Sequence[Sequence]):
+    out_tables = []
+    for table in tables:
+        # FrnHistoryTable
+        if len(table[0]) == 1 and len(table[1]) == 9 and table[1][0] == "Callsign":
+            out_tables.append(FrnHistoryTable(table[2:]))
+
+        # VanityApplicationsHistoryTable
+        elif len(table[0]) >= 10 and table[0][0] == "Receipt Date":
+            out_tables.append(VanityApplicationsHistoryTable(table[1:]))
 
         # otherwise, Table
         else:
