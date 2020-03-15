@@ -84,7 +84,21 @@ class Ae7qCanadianCallData(Ae7qData):
 
 class Ae7qLicenseeData(Ae7qData):
     # http://ae7q.com/query/data/LicenseeIdHistory.php?ID=L01295086
-    pass
+    def __init__(self, tables: Sequence[Table], query: str):
+        url = base_url + "data/LicenseeIdHistory.php?ID=" + query
+        super().__init__(tables, query, url)
+
+        self.licensee_id_history = None
+        self.application_history = None
+        self.pending_applications = None
+
+        for table in tables:
+            if self.licensee_id_history is None and isinstance(table, LicenseeIdHistoryTable):
+                self.licensee_id_history = table
+            elif self.application_history is None and isinstance(table, VanityApplicationsHistoryTable):
+                self.application_history = table
+            elif self.pending_applications is None and isinstance(table, PendingApplicationsPredictionsTable):
+                self.pending_applications = table
 
 
 class Ae7qFrnData(Ae7qData):
@@ -95,12 +109,15 @@ class Ae7qFrnData(Ae7qData):
 
         self.frn_history = None
         self.application_history = None
+        self.pending_applications = None
 
         for table in tables:
             if self.frn_history is None and isinstance(table, FrnHistoryTable):
                 self.frn_history = table
             elif self.application_history is None and isinstance(table, VanityApplicationsHistoryTable):
                 self.application_history = table
+            elif self.pending_applications is None and isinstance(table, PendingApplicationsPredictionsTable):
+                self.pending_applications = table
 
 
 class Ae7qApplicationData(Ae7qData):

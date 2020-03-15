@@ -45,7 +45,19 @@ def get_call(callsign: str) -> Ae7qCallData:
 
 
 def get_licensee_id(licensee_id: str) -> Ae7qLicenseeData:
-    ...
+    url = base_url + "data/LicenseeIdHistory.php?ID=" + licensee_id
+    request = requests.get(url)
+
+    html = request.text
+    soup = BeautifulSoup(html, features="html.parser")
+
+    tables = soup.find_all("table", "Database")
+
+    processed_tables = _parse_tables(tables)
+
+    parsed_tables = _assign_licensee_tables(processed_tables)
+
+    return Ae7qLicenseeData(parsed_tables, licensee_id)
 
 
 def get_frn(frn: str) -> Ae7qFrnData:
@@ -195,11 +207,33 @@ def _assign_call_tables(tables: Sequence[Sequence]):
     return out_tables
 
 
+def _assign_licensee_tables(tables: Sequence[Sequence]):
+    out_tables = []
+    for table in tables:
+        # LicenseeIdHistoryTable
+        if len(table[0]) == 1 and len(table[1]) == 10 and table[1][0] == "Callsign":
+            out_tables.append(LicenseeIdHistoryTable(table[2:]))
+
+        # PendingApplicationsPredictionsTable
+        elif len(table[0]) == 10 and table[0][-1] == "Prediction":
+            out_tables.append(PendingApplicationsPredictionsTable(table[1:]))
+
+        # VanityApplicationsHistoryTable
+        elif len(table[0]) == 10 and table[0][0] == "Receipt Date":
+            out_tables.append(VanityApplicationsHistoryTable(table[1:]))
+
+        # otherwise, Table
+        else:
+            out_tables.append(Table(table))
+
+    return out_tables
+
+
 def _assign_frn_tables(tables: Sequence[Sequence]):
     out_tables = []
     for table in tables:
         # FrnHistoryTable
-        if len(table[0]) == 1 and len(table[1]) == 9 and table[1][0] == "Callsign":
+        if len(table[0]) == 1 and len(table[1]) == 10 and table[1][0] == "Callsign":
             out_tables.append(FrnHistoryTable(table[2:]))
 
         # PendingApplicationsPredictionsTable

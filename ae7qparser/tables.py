@@ -136,3 +136,22 @@ class FrnHistoryRow(Row):
 
 class FrnHistoryTable(Table):
     row_cls = FrnHistoryRow
+
+
+class LicenseeIdHistoryRow(Row):
+    def __init__(self, row_data: Sequence):
+        super().__init__(row_data)
+        self.callsign = row_data[0]
+        self.region_state = row_data[1]
+        self.entity_name = row_data[2]
+        self.applicant_type = row_data[3]
+        self.operator_class = row_data[4]
+        self.license_status = row_data[5]
+        self.grant_date = row_data[6]
+        self.effective_date = row_data[7]
+        self.cancel_date = row_data[8]
+        self.expire_date = row_data[9]
+
+
+class LicenseeIdHistoryTable(Table):
+    row_cls = LicenseeIdHistoryRow
