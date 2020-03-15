@@ -7,7 +7,9 @@ Released under the terms of the MIT license.
 """
 
 
-from typing import Sequence
+from typing import Sequence, Union
+import re
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup, element
@@ -132,11 +134,30 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
         rows.append(row)
         remainder = next_remainder
 
+    if rows[0][-1] == "Vanity callsign(s)applied for":
+        # combine application rows and applied callsigns
+        new_rows = []
+        for row in rows:
+            if row[4] not in [x[4] for x in new_rows]:
+                matching_rows = [x for x in rows if x[4] == row[4]]
+                new_row = row[0:9]
+                new_cell = []
+                for r in matching_rows:
+                    new_cell += [x for x in r[9:] if x != ""]
+                new_row.append(tuple(new_cell))
+                new_rows.append(new_row)
+        return new_rows
+
     return rows
 
 
-def __get_cell_text(cell: element.Tag) -> str:
-    return " ".join(cell.getText().split())
+def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
+    text = " ".join(cell.getText().split())
+    if re.fullmatch(r"\w{3} \d{4}-\d{2}-\d{2}", text):
+        text = datetime.strptime(text, "%a %Y-%m-%d")
+    elif re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        text = datetime.strptime(text, "%Y-%m-%d")
+    return text
 
 
 def _assign_call_tables(tables: Sequence[Sequence]):
@@ -163,6 +184,10 @@ def _assign_call_tables(tables: Sequence[Sequence]):
         elif len(table[0]) == 5 and table[0][0] == "Start Date":
             out_tables.append(EventCallsignTable(table[1:]))
 
+        # PendingApplicationsPredictionsTable
+        elif len(table[0]) == 10 and table[0][-1] == "Prediction":
+            out_tables.append(PendingApplicationsPredictionsTable(table[1:]))
+
         # otherwise, Table
         else:
             out_tables.append(Table(table))
@@ -177,8 +202,12 @@ def _assign_frn_tables(tables: Sequence[Sequence]):
         if len(table[0]) == 1 and len(table[1]) == 9 and table[1][0] == "Callsign":
             out_tables.append(FrnHistoryTable(table[2:]))
 
+        # PendingApplicationsPredictionsTable
+        elif len(table[0]) == 10 and table[0][-1] == "Prediction":
+            out_tables.append(PendingApplicationsPredictionsTable(table[1:]))
+
         # VanityApplicationsHistoryTable
-        elif len(table[0]) >= 10 and table[0][0] == "Receipt Date":
+        elif len(table[0]) == 10 and table[0][0] == "Receipt Date":
             out_tables.append(VanityApplicationsHistoryTable(table[1:]))
 
         # otherwise, Table

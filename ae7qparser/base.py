@@ -18,7 +18,12 @@ class Row(abc.Sequence):
 
     @property
     def csv(self) -> str:
-        return ";".join([str(cell) for cell in self._data])
+        csv_data = []
+        for cell in self._data:
+            if isinstance(cell, list) or isinstance(cell, tuple):
+                cell = ",".join(cell)
+            csv_data.append(cell)
+        return ";".join([str(cell) for cell in csv_data])
 
     # --- Wrappers to implement sequence-like functionality ---
     def __len__(self):

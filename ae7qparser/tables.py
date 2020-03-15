@@ -86,6 +86,25 @@ class VanityApplicationsHistoryTable(Table):
     row_cls = VanityApplicationsHistoryRow
 
 
+class PendingApplicationsPredictionsRow(Row):
+    def __init__(self, row_data: Sequence):
+        super().__init__(row_data)
+        self.receipt_date = row_data[0]
+        self.process_date = row_data[1]
+        self.applicant_callsign = row_data[2]
+        self.region_state = row_data[3]
+        self.operator_class = row_data[4]
+        self.uls_file_number = row_data[5]
+        self.vanity_type = row_data[6]
+        self.sequential_number = row_data[7]
+        self.vanity_callsign = row_data[8]
+        self.prediction = row_data[9]
+
+
+class PendingApplicationsPredictionsTable(Table):
+    row_cls = PendingApplicationsPredictionsRow
+
+
 class EventCallsignRow(Row):
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)

@@ -13,13 +13,14 @@ call = input("call? ")
 
 calldata = ae7qparser.get_call(call)
 
-print(calldata.tables[-1].csv)
-# print(calldata.tables[0])
+for table in calldata.tables:
+    print(type(table))
+    print(table.csv)
 
 frn = input("frn? ")
 
 frndata = ae7qparser.get_frn(frn)
 
-print(type(frndata.tables[-1]))
-print(frndata.tables[-1].csv)
-# print(frndata.tables[0])
+for table in frndata.tables:
+    print(type(table))
+    print(table.csv)
