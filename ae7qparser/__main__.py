@@ -6,26 +6,32 @@ Copyright 2020 classabbyamp, 0x5c
 Released under the terms of the MIT license.
 """
 
+import argparse
 
 import ae7qparser
 
-# call = input("call? ")
-call = "kn8u"
 
-calldata = ae7qparser.get_call(call)
+parser = argparse.ArgumentParser(description="Retrieve and parse AE7Q data")
+parser.add_argument("-c" "--call", nargs="*", required=False,
+                    help="Get AE7Q data for a callsign")
+parser.add_argument("-f" "--frn", nargs="*", required=False,
+                    help="Get AE7Q data for an FRN")
+parser.add_argument("-l" "--licensee", nargs="*", required=False,
+                    help="Get AE7Q data for a Licensee ID")
+args = parser.parse_args()
 
-print(calldata.__dict__)
 
-# frn = input("frn? ")
-frn = "0016605636"
+if args.c__call is not None:
+    for call in args.c__call:
+        calldata = ae7qparser.get_call(call)
+        print(calldata.__dict__)
 
-frndata = ae7qparser.get_frn(frn)
+if args.f__frn is not None:
+    for frn in args.f__frn:
+        frndata = ae7qparser.get_frn(frn)
+        print(frndata.__dict__)
 
-print(frndata.__dict__)
-
-# lid = input("lid? ")
-lid = "L01295086"
-
-liddata = ae7qparser.get_licensee_id(lid)
-
-print(liddata.__dict__)
+if args.l__licensee is not None:
+    for lid in args.l__licensee:
+        liddata = ae7qparser.get_licensee_id(lid)
+        print(liddata.__dict__)
