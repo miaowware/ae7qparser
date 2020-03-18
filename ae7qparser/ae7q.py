@@ -76,6 +76,22 @@ def get_frn(frn: str) -> Ae7qFrnData:
     return Ae7qFrnData(parsed_tables, frn)
 
 
+def get_application(app_id: str) -> Ae7qApplicationData:
+    url = base_url + "data/AppDetail.php?UFN=" + app_id
+    request = requests.get(url)
+
+    html = request.text
+    soup = BeautifulSoup(html, features="html.parser")
+
+    tables = soup.find_all("table", "Database")
+
+    processed_tables = _parse_tables(tables)
+
+    parsed_tables = _assign_frn_tables(processed_tables)
+
+    return Ae7qApplicationData(parsed_tables, app_id)
+
+
 ##### PRIVATE FUNCTIONS
 def _parse_tables(tables: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
     parsed_tables = []
@@ -169,6 +185,8 @@ def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
         text = datetime.strptime(text, "%a %Y-%m-%d")
     elif re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
         text = datetime.strptime(text, "%Y-%m-%d")
+    elif re.fullmatch(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", text):
+        text = datetime.strptime(text, "%Y-%m-%d %H:%M:%S")
     return text
 
 

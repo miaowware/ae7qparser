@@ -52,6 +52,24 @@ class Table(abc.Sequence):
     def csv(self) -> str:
         return "\n".join([row.csv for row in self._data])
 
+    @property
+    def csv_pretty(self) -> str:
+        csv_out = ""
+        csv = [row.csv.split(";") for row in self._data]
+        maxes = []
+        for i in range(0, len(csv[0])):
+            maxes.append(max([len(str(x[i])) for x in csv]))
+
+        for i, row in enumerate(csv):
+            for j in range(0, len(csv[0])):
+                csv_out += f"{row[j]:<{maxes[j]}}"
+                if j != len(csv[0]) - 1:
+                    csv_out += " | "
+            if i != len(csv) - 1:
+                csv_out += "\n"
+
+        return csv_out
+
     # --- Wrappers to implement sequence-like functionality ---
     def __len__(self):
         return len(self._data)

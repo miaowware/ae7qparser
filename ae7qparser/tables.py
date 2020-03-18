@@ -155,3 +155,26 @@ class LicenseeIdHistoryRow(Row):
 
 class LicenseeIdHistoryTable(Table):
     row_cls = LicenseeIdHistoryRow
+
+
+class ApplicationActionHistoryRow(Row):
+    def __init__(self, row_data: Sequence):
+        super().__init__(row_data)
+        self.action_date = row_data[0]
+        self.action_type = row_data[1]
+
+
+class ApplicationActionHistoryTable(Table):
+    row_cls = ApplicationActionHistoryRow
+
+
+class ApplicationVanityCallsignsRow(Row):
+    def __init__(self, row_data: Sequence):
+        super().__init__(row_data)
+        self.sequence_number = row_data[0]
+        self.callsign = row_data[1]
+        self.prediction = row_data[2] if len(row_data) == 3 else None
+
+
+class ApplicationVanityCallsignsTable(Table):
+    row_cls = ApplicationVanityCallsignsRow
