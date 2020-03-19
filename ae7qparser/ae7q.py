@@ -187,6 +187,8 @@ def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
         text = datetime.strptime(text, "%Y-%m-%d")
     elif re.fullmatch(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", text):
         text = datetime.strptime(text, "%Y-%m-%d %H:%M:%S")
+    elif text == r"(none)":
+        text = ""
     return text
 
 

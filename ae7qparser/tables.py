@@ -65,7 +65,7 @@ class ApplicationsHistoryRow(Row):
         self.application_callsign = row_data[1]
         self.region_state = row_data[2]
         self.entity_name = row_data[3]
-        self.uls_file_number = row_data[4]
+        self.uls_file_number = row_data[4].strip("(Batch)").strip("(Online)")
         self.application_purpose = row_data[5]
         self.payment_date = row_data[6]
         self.last_action_date = row_data[7]
@@ -94,7 +94,7 @@ class PendingApplicationsPredictionsRow(Row):
         self.applicant_callsign = row_data[2]
         self.region_state = row_data[3]
         self.operator_class = row_data[4]
-        self.uls_file_number = row_data[5]
+        self.uls_file_number = row_data[5].strip("(Batch)").strip("(Online)")
         self.vanity_type = row_data[6]
         self.sequential_number = row_data[7]
         self.vanity_callsign = row_data[8]
