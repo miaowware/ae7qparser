@@ -107,4 +107,4 @@ class Ae7qData:
         module = type_.__module__
         qualname = type_.__qualname__
         return (f"<{module}.{qualname} object at {hex(id(self))}, "
-                f"query={self.query}>")
+                f"query={self.query}, query_time={self.query_time}>")
