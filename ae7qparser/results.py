@@ -44,7 +44,7 @@ class Ae7qCanadianCallData(Ae7qData):
         url = base_url + "data/CallHistory.php?CALL=" + query
         super().__init__(tables, query, url)
 
-        self.callsign_data = Table(tables[0][1:])
+        self.callsign_data = Table(tables[0])
 
         self.callsign = None
         self.given_names = None
@@ -127,9 +127,9 @@ class Ae7qApplicationData(Ae7qData):
         super().__init__(tables, query, url)
 
         # tables
-        self.application_data = Table(tables[0][2:])
-        self.application_history = ApplicationActionHistoryTable(tables[1][1:]) if len(tables) > 1 else None
-        self.vanity_callsigns = ApplicationVanityCallsignsTable(tables[2][1:]) if len(tables) > 2 else None
+        self.application_data = tables[0]
+        self.application_history = tables[1] if len(tables) > 1 else None
+        self.vanity_callsigns = tables[2] if len(tables) > 2 else None
 
         # data
         self.frn = None

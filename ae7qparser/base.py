@@ -42,22 +42,32 @@ class Row(abc.Sequence):
 
 class Table(abc.Sequence):
     row_cls = Row  # Class attribute
-    def __init__(self, data: Sequence[Sequence]):
+
+    def __init__(self, data: Sequence[Sequence], header_row: int = 0):
+        if header_row == -1:
+            self.col_names = None
+        else:
+            self.col_names = Row(data[header_row])
+        header_row += 1
+
         rows = []
-        for row_data in data:
+        for row_data in data[header_row:]:
             rows.append(self.row_cls(row_data))
         self._data = tuple(rows)  # Making the data immutable
 
     @property
     def csv(self) -> str:
-        return "\n".join([row.csv for row in self._data])
+        csv = self.col_names.csv + "\n" if self.col_names is not None else ""
+        csv += "\n".join([row.csv for row in self._data])
+        return csv
 
     @property
     def csv_pretty(self) -> str:
         csv_out = ""
-        csv = [row.csv.split(";") for row in self._data]
+        csv = [self.col_names.csv.split(";")] if self.col_names is not None else []
+        csv += [row.csv.split(";") for row in self._data]
         maxes = []
-        for i in range(0, len(csv[0])):
+        for i in range(0, len(csv[-1])):
             maxes.append(max([len(str(x[i])) for x in csv]))
 
         for i, row in enumerate(csv):

@@ -87,7 +87,10 @@ def get_application(app_id: str) -> Ae7qApplicationData:
 
     processed_tables = _parse_tables(tables)
 
-    parsed_tables = _assign_frn_tables(processed_tables)
+    parsed_tables = [Table(processed_tables[0], 1)]
+    parsed_tables += [ApplicationActionHistoryTable(processed_tables[1])] if len(processed_tables) > 1 else []
+    parsed_tables += [ApplicationVanityCallsignsTable(processed_tables[2])] if len(processed_tables) > 2 else []
+    parsed_tables += [Table(t) for t in processed_tables[3:]] if len(processed_tables) > 3 else []
 
     return Ae7qApplicationData(parsed_tables, app_id)
 
@@ -174,6 +177,7 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
                     new_cell += [x for x in r[9:] if x != ""]
                 new_row.append(tuple(new_cell))
                 new_rows.append(new_row)
+        new_rows[0][-1] = "Vanity callsign(s)applied for"
         return new_rows
 
     return rows
@@ -197,32 +201,32 @@ def _assign_call_tables(tables: Sequence[Sequence]):
     for table in tables:
         # ConditionsTable
         if len(table) == 1 and len(table[0]) == 1:
-            out_tables.append(ConditionsTable(table))
+            out_tables.append(ConditionsTable(table, -1))
 
         # CallHistoryTable
         # Don't want the first row, it's a header
         elif len(table[0]) == 9 and table[0][0] == "Entity Name":
-            out_tables.append(CallHistoryTable(table[1:]))
+            out_tables.append(CallHistoryTable(table))
 
         # TrusteeTable
         elif len(table[0]) == 1 and len(table[1]) == 9 and table[1][0] == "Callsign":
-            out_tables.append(TrusteeTable(table[2:]))
+            out_tables.append(TrusteeTable(table, 1))
 
         # ApplicationsHistoryTable
         elif len(table[0]) == 9 and table[0][0] == "Receipt Date":
-            out_tables.append(ApplicationsHistoryTable(table[1:]))
+            out_tables.append(ApplicationsHistoryTable(table))
 
         # EventCallsignTable
         elif len(table[0]) == 5 and table[0][0] == "Start Date":
-            out_tables.append(EventCallsignTable(table[1:]))
+            out_tables.append(EventCallsignTable(table))
 
         # PendingApplicationsPredictionsTable
         elif len(table[0]) == 10 and table[0][-1] == "Prediction":
-            out_tables.append(PendingApplicationsPredictionsTable(table[1:]))
+            out_tables.append(PendingApplicationsPredictionsTable(table))
 
         # otherwise, Table
         else:
-            out_tables.append(Table(table))
+            out_tables.append(Table(table, -1))
 
     return out_tables
 
@@ -232,19 +236,19 @@ def _assign_licensee_tables(tables: Sequence[Sequence]):
     for table in tables:
         # LicenseeIdHistoryTable
         if len(table[0]) == 1 and len(table[1]) == 10 and table[1][0] == "Callsign":
-            out_tables.append(LicenseeIdHistoryTable(table[2:]))
+            out_tables.append(LicenseeIdHistoryTable(table, 1))
 
         # PendingApplicationsPredictionsTable
         elif len(table[0]) == 10 and table[0][-1] == "Prediction":
-            out_tables.append(PendingApplicationsPredictionsTable(table[1:]))
+            out_tables.append(PendingApplicationsPredictionsTable(table))
 
         # VanityApplicationsHistoryTable
         elif len(table[0]) == 10 and table[0][0] == "Receipt Date":
-            out_tables.append(VanityApplicationsHistoryTable(table[1:]))
+            out_tables.append(VanityApplicationsHistoryTable(table))
 
         # otherwise, Table
         else:
-            out_tables.append(Table(table))
+            out_tables.append(Table(table, -1))
 
     return out_tables
 
@@ -254,18 +258,18 @@ def _assign_frn_tables(tables: Sequence[Sequence]):
     for table in tables:
         # FrnHistoryTable
         if len(table[0]) == 1 and len(table[1]) == 10 and table[1][0] == "Callsign":
-            out_tables.append(FrnHistoryTable(table[2:]))
+            out_tables.append(FrnHistoryTable(table, 1))
 
         # PendingApplicationsPredictionsTable
         elif len(table[0]) == 10 and table[0][-1] == "Prediction":
-            out_tables.append(PendingApplicationsPredictionsTable(table[1:]))
+            out_tables.append(PendingApplicationsPredictionsTable(table))
 
         # VanityApplicationsHistoryTable
         elif len(table[0]) == 10 and table[0][0] == "Receipt Date":
-            out_tables.append(VanityApplicationsHistoryTable(table[1:]))
+            out_tables.append(VanityApplicationsHistoryTable(table))
 
         # otherwise, Table
         else:
-            out_tables.append(Table(table))
+            out_tables.append(Table(table, -1))
 
     return out_tables
