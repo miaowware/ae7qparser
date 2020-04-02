@@ -178,3 +178,16 @@ class ApplicationVanityCallsignsRow(Row):
 
 class ApplicationVanityCallsignsTable(Table):
     row_cls = ApplicationVanityCallsignsRow
+
+
+class ApplicationAttachmentsRow(Row):
+    def __init__(self, row_data: Sequence):
+        super().__init__(row_data)
+        self.date = row_data[0]
+        self.type = row_data[1]
+        self.description = row_data[2]
+        self.result = row_data[3]
+
+
+class ApplicationAttachmentsTable(Table):
+    row_cls = ApplicationAttachmentsRow

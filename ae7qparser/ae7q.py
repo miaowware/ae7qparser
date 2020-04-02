@@ -86,11 +86,19 @@ def get_application(app_id: str) -> Ae7qApplicationData:
     tables = soup.find_all("table", "Database")
 
     processed_tables = _parse_tables(tables)
+    parsed_tables = []
 
-    parsed_tables = [Table(processed_tables[0], 1)]
-    parsed_tables += [ApplicationActionHistoryTable(processed_tables[1])] if len(processed_tables) > 1 else []
-    parsed_tables += [ApplicationVanityCallsignsTable(processed_tables[2])] if len(processed_tables) > 2 else []
-    parsed_tables += [Table(t) for t in processed_tables[3:]] if len(processed_tables) > 3 else []
+    for table in processed_tables:
+        if table[0][0] == "FieldName":
+            parsed_tables.append(Table(table, 1))
+        elif table[0][0] == "Action Date":
+            parsed_tables.append(ApplicationActionHistoryTable(table))
+        elif table[0][0] == "Attachment records":
+            parsed_tables.append(ApplicationAttachmentsTable(table, 1))
+        elif table[0][1] == "Vanity Callsign":
+            parsed_tables.append(ApplicationVanityCallsignsTable(table))
+        else:
+            parsed_tables.append(Table(table))
 
     return Ae7qApplicationData(parsed_tables, app_id)
 

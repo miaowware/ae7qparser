@@ -127,9 +127,20 @@ class Ae7qApplicationData(Ae7qData):
         super().__init__(tables, query, url)
 
         # tables
-        self.application_data = tables[0]
-        self.application_history = tables[1] if len(tables) > 1 else None
-        self.vanity_callsigns = tables[2] if len(tables) > 2 else None
+        self.application_data = None
+        self.action_history = None
+        self.vanity_callsigns = None
+        self.attachments = None
+
+        for table in tables:
+            if self.application_data is None and isinstance(table, Table) and table.col_names[0] == "FieldName":
+                self.application_data = table
+            elif self.action_history is None and isinstance(table, ApplicationActionHistoryTable):
+                self.action_history = table
+            elif self.vanity_callsigns is None and isinstance(table, ApplicationVanityCallsignsTable):
+                self.vanity_callsigns = table
+            elif self.attachments is None and isinstance(table, ApplicationAttachmentsTable):
+                self.attachments = table
 
         # data
         self.frn = None
