@@ -24,8 +24,25 @@ $ pip install ae7qparser
 
 **CLI is work in progress!**  
 
+Currently, the CLI prints the members of each resulting object, including tables.
+
 ```none
-$ python3 -m ae7qparser
+$ python3 -m ae7qparser -h
+
+usage: ae7qparser [-h] [-c [CALL [CALL ...]]] [-f [FRN [FRN ...]]] [-l [LID [LID ...]]] [-a [UFN [UFN ...]]]
+
+Retrieve and parse AE7Q data
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c [CALL [CALL ...]], --call [CALL [CALL ...]]
+                        Get AE7Q data for a callsign
+  -f [FRN [FRN ...]], --frn [FRN [FRN ...]]
+                        Get AE7Q data for an FRN
+  -l [LID [LID ...]], --lic [LID [LID ...]]
+                        Get AE7Q data for a Licensee ID
+  -a [UFN [UFN ...]], --app [UFN [UFN ...]]
+                        Get AE7Q data for a ULS File Number
 ```
 
 

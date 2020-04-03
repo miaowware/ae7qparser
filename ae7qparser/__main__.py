@@ -11,20 +11,20 @@ import argparse
 import ae7qparser
 
 
-parser = argparse.ArgumentParser(description="Retrieve and parse AE7Q data")
-parser.add_argument("-c" "--call", nargs="*", required=False,
+parser = argparse.ArgumentParser(prog="ae7qparser", description="Retrieve and parse AE7Q data")
+parser.add_argument("-c", "--call", required=False, metavar="CALL", nargs="*",
                     help="Get AE7Q data for a callsign")
-parser.add_argument("-f" "--frn", nargs="*", required=False,
+parser.add_argument("-f", "--frn", required=False, metavar="FRN", nargs="*",
                     help="Get AE7Q data for an FRN")
-parser.add_argument("-l" "--licensee", nargs="*", required=False,
+parser.add_argument("-l", "--lic", required=False, metavar="LID", nargs="*",
                     help="Get AE7Q data for a Licensee ID")
-parser.add_argument("-a" "--application", nargs="*", required=False,
+parser.add_argument("-a", "--app", required=False, metavar="UFN", nargs="*",
                     help="Get AE7Q data for a ULS File Number")
 args = parser.parse_args()
 
 
-if args.c__call is not None:
-    for call in args.c__call:
+if args.call is not None:
+    for call in args.call:
         calldata = ae7qparser.get_call(call)
         print(f"==== Callsign: {call} ====")
         for key, val in calldata.__dict__.items():
@@ -35,8 +35,8 @@ if args.c__call is not None:
                 print(f"{key}: {val}")
         print("")
 
-if args.f__frn is not None:
-    for frn in args.f__frn:
+if args.frn is not None:
+    for frn in args.frn:
         frndata = ae7qparser.get_frn(frn)
         print(f"==== FRN: {frn} ====")
         for key, val in frndata.__dict__.items():
@@ -47,8 +47,8 @@ if args.f__frn is not None:
                 print(f"{key}: {val}")
         print("")
 
-if args.l__licensee is not None:
-    for lid in args.l__licensee:
+if args.lic is not None:
+    for lid in args.lic:
         liddata = ae7qparser.get_licensee_id(lid)
         print(f"==== Licensee ID: {lid} ====")
         for key, val in liddata.__dict__.items():
@@ -59,8 +59,8 @@ if args.l__licensee is not None:
                 print(f"{key}: {val}")
         print("")
 
-if args.a__application is not None:
-    for app_id in args.a__application:
+if args.app is not None:
+    for app_id in args.app:
         appdata = ae7qparser.get_application(app_id)
         print(f"==== ULS File Number: {app_id} ====")
         for key, val in appdata.__dict__.items():
