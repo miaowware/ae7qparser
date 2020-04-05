@@ -25,7 +25,16 @@ ca_pfx = ["va", "ve", "vo", "vy", "cy"]
 
 
 ##### PUBLIC FUNCTIONS
-def get_call(callsign: str) -> Ae7qCallData:
+def get_call(callsign: str) -> Union[Ae7qCallData, Ae7qCanadianCallData]:
+    """
+    Gets AE7Q data for a callsign. Works with American and Canadian calls.
+
+    Args:
+        callsign (str): Callsign to lookup.
+
+    Returns:
+        An Ae7qCallData or Ae7qCanadianCallData object.
+    """
     url = base_url + "data/CallHistory.php?CALL=" + callsign
     request = requests.get(url)
 
@@ -45,6 +54,15 @@ def get_call(callsign: str) -> Ae7qCallData:
 
 
 def get_licensee_id(licensee_id: str) -> Ae7qLicenseeData:
+    """
+    Gets AE7Q data for a Licensee ID.
+
+    Args:
+        licensee_id (str): Licensee ID to lookup.
+
+    Returns:
+        An Ae7qLicenseeData object.
+    """
     url = base_url + "data/LicenseeIdHistory.php?ID=" + licensee_id
     request = requests.get(url)
 
@@ -61,6 +79,15 @@ def get_licensee_id(licensee_id: str) -> Ae7qLicenseeData:
 
 
 def get_frn(frn: str) -> Ae7qFrnData:
+    """
+    Gets AE7Q data for an FRN.
+
+    Args:
+        frn (str): FRN to lookup.
+
+    Returns:
+        An Ae7qFrnData object.
+    """
     url = base_url + "data/FrnHistory.php?FRN=" + frn
     request = requests.get(url)
 
@@ -77,6 +104,15 @@ def get_frn(frn: str) -> Ae7qFrnData:
 
 
 def get_application(app_id: str) -> Ae7qApplicationData:
+    """
+    Gets AE7Q data for a ULS File Number.
+
+    Args:
+        app_id (str): UFN to lookup.
+
+    Returns:
+        An Ae7qApplicationData object.
+    """
     url = base_url + "data/AppDetail.php?UFN=" + app_id
     request = requests.get(url)
 

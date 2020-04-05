@@ -17,7 +17,28 @@ base_url = "http://ae7q.com/query/"
 
 
 class Ae7qCallData(Ae7qData):
-    # http://ae7q.com/query/data/CallHistory.php?CALL=kn8u
+    """Ae7qCallData
+    ------
+
+    Data container for the result of an AE7Q callsign query.
+    Descended from Ae7qData.
+
+    Example URL for the query: http://ae7q.com/query/data/CallHistory.php?CALL={{ callsign }}
+
+    Args:
+        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+
+    Attributes:
+        tables (tuple[Table]): the tables stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+        query_time (DateTime): the time at which the query was executed.
+        conditions (ConditionsTable): table of conditions for the callsign.
+        call_history (CallHistoryTable): table of the callsign holder history.
+        trustee_history (TrusteeTable): table of any callsigns the callsign holder has been trustee of.
+        application_history (ApplicationsHistoryTable): table of applications for the callsign.
+    """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/CallHistory.php?CALL=" + query
         super().__init__(tables, query, url)
@@ -39,7 +60,36 @@ class Ae7qCallData(Ae7qData):
 
 
 class Ae7qCanadianCallData(Ae7qData):
-    # http://ae7q.com/query/data/CallHistory.php?CALL=va2shf
+    """Ae7qCanadianCallData
+    ------
+
+    Data container for the result of an AE7Q callsign query, if the callsign is Canadian.
+    Descended from Ae7qData.
+
+    Example URL for the query: http://ae7q.com/query/data/CallHistory.php?CALL={{ callsign }}
+
+    Args:
+        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+
+    Attributes:
+        tables (tuple[Table]): the tables stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+        query_time (DateTime): the time at which the query was executed.
+        callsign_data (Table):
+        callsign: the callsign of the query result.
+        given_names: the given names of the callsign holder.
+        surname: the surname of the callsign holder.
+        address: the address of the callsign holder.
+        locality: the locality of the callsign holder.
+        province: the province of the callsign holder.
+        postal_code: the postal code of the callsign holder.
+        country: the country of the callsign holder.
+        region: the region of the callsign holder.
+        grid_square: the grid square of the callsign holder.
+        qualifications: the license qualifications of the callsign holder.
+    """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/CallHistory.php?CALL=" + query
         super().__init__(tables, query, url)
@@ -83,7 +133,27 @@ class Ae7qCanadianCallData(Ae7qData):
                 self.qualifications = row[1]
 
 class Ae7qLicenseeData(Ae7qData):
-    # http://ae7q.com/query/data/LicenseeIdHistory.php?ID=L01295086
+    """Ae7qLicenseeData
+    ------
+
+    Data container for the result of an AE7Q licensee ID query.
+    Descended from Ae7qData.
+
+    Example URL for the query: http://ae7q.com/query/data/LicenseeIdHistory.php?ID={{ licensee ID }}
+
+    Args:
+        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+
+    Attributes:
+        tables (tuple[Table]): the tables stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+        query_time (DateTime): the time at which the query was executed.
+        licensee_id_history (LicenseeIdHistoryTable): table of license history for the licensee ID.
+        application_history (VanityApplicationsHistoryTable): table of applications for the licensee ID.
+        pending_applications (PendingApplicationsPredictionsTable): table of pending applications for the licensee ID.
+    """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/LicenseeIdHistory.php?ID=" + query
         super().__init__(tables, query, url)
@@ -102,7 +172,27 @@ class Ae7qLicenseeData(Ae7qData):
 
 
 class Ae7qFrnData(Ae7qData):
-    # http://ae7q.com/query/data/FrnHistory.php?FRN=0016605636
+    """Ae7qFrnData
+    ------
+
+    Data container for the result of an AE7Q FRN query.
+    Descended from Ae7qData.
+
+    Example URL for the query: http://ae7q.com/query/data/FrnHistory.php?FRN={{ FRN }}
+
+    Args:
+        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+
+    Attributes:
+        tables (tuple[Table]): the tables stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+        query_time (DateTime): the time at which the query was executed.
+        frn_history (FrnHistoryTable): table of license history for the FRN.
+        application_history (VanityApplicationsHistoryTable): table of applications for the licensee ID.
+        pending_applications (PendingApplicationsPredictionsTable): table of pending applications for the licensee ID.
+    """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/FrnHistory.php?FRN=" + query
         super().__init__(tables, query, url)
@@ -121,7 +211,69 @@ class Ae7qFrnData(Ae7qData):
 
 
 class Ae7qApplicationData(Ae7qData):
-    # http://ae7q.com/query/data/AppDetail.php?UFN=0008963527
+    """Ae7qFrnData
+    ------
+
+    Data container for the result of an AE7Q application query.
+    Descended from Ae7qData.
+
+    Example URL for the query: http://ae7q.com/query/data/AppDetail.php?UFN={{ UFN }}
+
+    Args:
+        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+
+    Attributes:
+        tables (tuple[Table]): the tables stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+        query_time (DateTime): the time at which the query was executed.
+        application_data (Table): the application's data.
+        action_history (ApplicationActionHistoryTable): the application's action history.
+        vanity_callsigns (ApplicationVanityCallsignsTable): the application's applied callsigns.
+        attachments (ApplicationAttachmentsTable): the application's attachments.
+        frn: the applicant's FRN.
+        licensee_id: the applicant's FRN.
+        applicant_type: the applicant's type (e.g. club, individual).
+        entity_type: the applicant's entity type (e.g. Licensee).
+        entity_name: the applicant's entity name. This is sometimes the same as the other name fields.
+        attention: the applicant's ATTN line for their address. This is sometimes the trustee of the club.
+        first_name: the applicant's the applicant's first name.
+        middle_initial: the applicant's middle initial.
+        last_name: the applicant's last name.
+        name_suffix: the applicant's name suffix.
+        street_address: the applicant's street address.
+        po_box: the applicant's PO box number, if it exists.
+        locality: the applicant's locality.
+        county: the applicant's county.
+        state: the applicant's state.
+        postal_code: the applicant's postal code.
+        zip_location: the applicant's location (tuple of lattitude and longitude) based on ZIP code.
+        maidenhead: the applicant's grid square.
+        uls_geo_region: the applicant's geographic region (i.e. the number in the callsign based on address).
+        callsign: the applicant's callsign.
+        radio_service: the applicant's radio service code.
+        last_action_date: the application's last action date.
+        receipt_date: the application's receipt date.
+        entered_timestamp: the timestamp when the application was entered.
+        application_source: where the application was filed.
+        original_purpose: the application's original purpose.
+        application_purpose: the application's purpose.
+        result: the application's result.
+        fee_control_number: the application's fee control number. Probably blank, as no fees are collected now.
+        payment_date: the application's payment date. Probably blank, as no fees are collected now.
+        original_receipt: the application's original receipt date.
+        operator_class: the applicant's operator class.
+        operator_group: the applicant's operator group.
+        uls_group: the applicant's callsign group (A, B, C, or D)
+        new_sequential_callsign: whether the applicant is applying for a new sequential callsign.
+        vanity_type: the type of vanity application.
+        vanity_relationship: the relationship of the previous callsign holder to the applicant.
+        is_from_vec: whether the application was filed by a VEC.
+        is_trustee: whether the applicant is the trustee of the entity.
+        trustee_callsign: the applicant's trustee's callsign (if the entity is a club).
+        trustee_name: the applicant's trustee's name (if the entity is a club).
+    """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/AppDetail.php?UFN=" + query
         super().__init__(tables, query, url)
@@ -272,9 +424,3 @@ class Ae7qApplicationData(Ae7qData):
                 self.trustee_callsign = row[1]
             elif self.trustee_name is None and row[0] == "Trustee Name":
                 self.trustee_name = row[1]
-
-# other queries:
-# maybe for future?
-# http://ae7q.com/query/list/AppByReceipt.php?DATE=2018-06-08
-# http://www.ae7q.com/query/list/ProcessDate.php?DATE=yesterday
-# http://www.ae7q.com/query/list/CallByZip.php?ZIP5=07940

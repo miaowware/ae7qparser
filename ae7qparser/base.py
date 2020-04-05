@@ -13,6 +13,20 @@ from typing import Sequence
 
 
 class Row(abc.Sequence):
+    """Row
+    ------
+
+    Class representing a table Row.
+    Initialised with the row's data.
+
+    The row's data can be accessed like a sequence.
+
+    Args:
+        row_data (Sequence): the data to store in the row.
+
+    Properties:
+        csv (str): returns the row data, with cells separated by semicolons.
+    """
     def __init__(self, row_data: Sequence):
         self._data = tuple(row_data)
 
@@ -41,6 +55,29 @@ class Row(abc.Sequence):
 
 
 class Table(abc.Sequence):
+    """Table
+    ------
+
+    Class representing a Table.
+    Initialised with a nested sequence and (optionally) a row to use as column headers.
+
+    The table's data can be accessed like a sequence.
+
+    Args:
+        data (Sequence[Sequence]): the data to be stored in the Table.
+        header_row (int): the row to store as column names. If not provided, the first row will be used. If -1, no row
+            will be used as column names.
+
+    Attributes:
+        col_names (Sequence): the names of each column in the table.
+        row_cls (Row): the class to use for the Table's rows. By default, the class is Row.
+
+    Properties:
+        csv (str): returns each row's data separated by semicolons, with each row separated by a newline. It includes
+            column names.
+        csv_pretty (str): returns each row's data, separated by pipes, with each row separated by a newline. It includes
+            column names.
+    """
     row_cls = Row  # Class attribute
 
     def __init__(self, data: Sequence[Sequence], header_row: int = 0):
@@ -96,6 +133,23 @@ class Table(abc.Sequence):
 
 
 class Ae7qData:
+    """Ae7qData
+    ------
+
+    Class representing Ae7qData.
+    Initialised with a sequence of Tables, a query, and a query_url.
+
+    Args:
+        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+
+    Attributes:
+        tables (tuple[Table]): the tables stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+        query_time (DateTime): the time at which the query was executed.
+    """
     def __init__(self, tables: Sequence[Table], query: str, query_url: str):
         self.tables = tuple(tables)
         self.query = query
