@@ -6,7 +6,6 @@ Copyright 2020 classabbyamp, 0x5c
 Released under the terms of the MIT license.
 """
 
-import json
 import collections.abc as abc
 from datetime import datetime
 from typing import Sequence

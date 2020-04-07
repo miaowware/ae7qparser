@@ -132,6 +132,7 @@ class Ae7qCanadianCallData(Ae7qData):
             elif self.qualifications is None and row[0] == "Qualifications":
                 self.qualifications = row[1]
 
+
 class Ae7qLicenseeData(Ae7qData):
     """Ae7qLicenseeData
     ------
@@ -211,7 +212,7 @@ class Ae7qFrnData(Ae7qData):
 
 
 class Ae7qApplicationData(Ae7qData):
-    """Ae7qFrnData
+    """Ae7qApplicationData
     ------
 
     Data container for the result of an AE7Q application query.
@@ -372,7 +373,7 @@ class Ae7qApplicationData(Ae7qData):
                 self.postal_code = row[1]
             elif (self.zip_location is None or len(self.zip_location) == 1) and row[0] == "Zip Location":
                 if self.zip_location is None:
-                    self.zip_location = [row[1],]
+                    self.zip_location = [row[1], ]
                 else:
                     self.zip_location.append(row[1])
                     self.zip_location = tuple(self.zip_location)

@@ -24,7 +24,7 @@ base_url = "http://ae7q.com/query/"
 ca_pfx = ["va", "ve", "vo", "vy", "cy"]
 
 
-##### PUBLIC FUNCTIONS
+# ------ PUBLIC FUNCTIONS ------
 def get_call(callsign: str) -> Union[Ae7qCallData, Ae7qCanadianCallData]:
     """
     Gets AE7Q data for a callsign. Works with American and Canadian calls.
@@ -139,8 +139,9 @@ def get_application(app_id: str) -> Ae7qApplicationData:
     return Ae7qApplicationData(parsed_tables, app_id)
 
 
-##### PRIVATE FUNCTIONS
-def _parse_tables(tables: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
+# ------ PRIVATE FUNCTIONS ------
+def _parse_tables(tables: Sequence[element.Tag]) -> list[list[list[Union[str, datetime.datetime]]]]:
+    # converts a list of html tables to a list of lists of text or datetimes
     parsed_tables = []
 
     for table in tables:
@@ -150,7 +151,8 @@ def _parse_tables(tables: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
     return parsed_tables
 
 
-def __parse_table_rows(table: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
+def __parse_table_rows(table: Sequence[element.Tag]) -> list[list[Union[str, datetime.datetime]]]:
+    # converts a table into rows of text or datetime
     rows = []
     remainder = []
 
@@ -171,11 +173,11 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
             cell = __get_cell_text(td)
             try:
                 rowspan = int(td.attrs["rowspan"])
-            except (ValueError, KeyError): # catch %, attr not found
+            except (ValueError, KeyError):  # catch %, attr not found
                 rowspan = 1
             try:
                 colspan = int(td.attrs["colspan"])
-            except (ValueError, KeyError): # catch %, attr not found
+            except (ValueError, KeyError):  # catch %, attr not found
                 colspan = 1
 
             # handle colspan > 1
@@ -227,7 +229,8 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> Sequence[Sequence[str]]:
     return rows
 
 
-def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
+def __get_cell_text(cell: element.Tag) -> Union[str, datetime.datetime]:
+    # gets the (better-formatted) cell text. If in certain formats, it will convert to datetime.
     text = " ".join(cell.getText().split())
     if re.fullmatch(r"\w{3} \d{4}-\d{2}-\d{2}", text):
         text = datetime.strptime(text, "%a %Y-%m-%d")
@@ -240,7 +243,8 @@ def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
     return text
 
 
-def _assign_call_tables(tables: Sequence[Sequence]):
+def _assign_call_tables(tables: list[list[list]]):
+    # create Table objects for a callsign query
     out_tables = []
     for table in tables:
         # ConditionsTable
@@ -275,7 +279,8 @@ def _assign_call_tables(tables: Sequence[Sequence]):
     return out_tables
 
 
-def _assign_licensee_tables(tables: Sequence[Sequence]):
+def _assign_licensee_tables(tables: list[list[list]]):
+    # create Table objects for a licensee ID query
     out_tables = []
     for table in tables:
         # LicenseeIdHistoryTable
@@ -297,7 +302,8 @@ def _assign_licensee_tables(tables: Sequence[Sequence]):
     return out_tables
 
 
-def _assign_frn_tables(tables: Sequence[Sequence]):
+def _assign_frn_tables(tables: list[list[list]]):
+    # create Table objects for an FRN query
     out_tables = []
     for table in tables:
         # FrnHistoryTable
