@@ -7,7 +7,7 @@ Released under the terms of the MIT license.
 """
 
 
-from typing import Sequence, Union
+from typing import Sequence, Union, List
 import re
 from datetime import datetime
 
@@ -140,7 +140,7 @@ def get_application(app_id: str) -> Ae7qApplicationData:
 
 
 # ------ PRIVATE FUNCTIONS ------
-def _parse_tables(tables: Sequence[element.Tag]) -> list[list[list[Union[str, datetime.datetime]]]]:
+def _parse_tables(tables: Sequence[element.Tag]) -> List[List[List[Union[str, datetime]]]]:
     # converts a list of html tables to a list of lists of text or datetimes
     parsed_tables = []
 
@@ -151,7 +151,7 @@ def _parse_tables(tables: Sequence[element.Tag]) -> list[list[list[Union[str, da
     return parsed_tables
 
 
-def __parse_table_rows(table: Sequence[element.Tag]) -> list[list[Union[str, datetime.datetime]]]:
+def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, datetime]]]:
     # converts a table into rows of text or datetime
     rows = []
     remainder = []
@@ -229,7 +229,7 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> list[list[Union[str, dat
     return rows
 
 
-def __get_cell_text(cell: element.Tag) -> Union[str, datetime.datetime]:
+def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
     # gets the (better-formatted) cell text. If in certain formats, it will convert to datetime.
     text = " ".join(cell.getText().split())
     if re.fullmatch(r"\w{3} \d{4}-\d{2}-\d{2}", text):
@@ -243,7 +243,7 @@ def __get_cell_text(cell: element.Tag) -> Union[str, datetime.datetime]:
     return text
 
 
-def _assign_call_tables(tables: list[list[list]]):
+def _assign_call_tables(tables: List[List[List]]):
     # create Table objects for a callsign query
     out_tables = []
     for table in tables:
@@ -279,7 +279,7 @@ def _assign_call_tables(tables: list[list[list]]):
     return out_tables
 
 
-def _assign_licensee_tables(tables: list[list[list]]):
+def _assign_licensee_tables(tables: List[List[List]]):
     # create Table objects for a licensee ID query
     out_tables = []
     for table in tables:
@@ -302,7 +302,7 @@ def _assign_licensee_tables(tables: list[list[list]]):
     return out_tables
 
 
-def _assign_frn_tables(tables: list[list[list]]):
+def _assign_frn_tables(tables: List[List[List]]):
     # create Table objects for an FRN query
     out_tables = []
     for table in tables:
