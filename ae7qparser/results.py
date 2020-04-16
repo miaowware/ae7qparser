@@ -286,7 +286,7 @@ class Ae7qApplicationData(Ae7qData):
         self.attachments = None
 
         for table in tables:
-            if self.application_data is None and isinstance(table, Table) and table.col_names[0] == "FieldName":
+            if self.application_data is None and isinstance(table, Table) and table.col_names[0] == "Field Name":
                 self.application_data = table
             elif self.action_history is None and isinstance(table, ApplicationActionHistoryTable):
                 self.action_history = table

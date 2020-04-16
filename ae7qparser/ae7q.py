@@ -125,7 +125,8 @@ def get_application(app_id: str) -> Ae7qApplicationData:
     parsed_tables = []
 
     for table in processed_tables:
-        if table[0][0] == "FieldName":
+        if table[0][0] == "Field Name":
+            table[1][1] = "Data"
             parsed_tables.append(Table(table, 1))
         elif table[0][0] == "Action Date":
             parsed_tables.append(ApplicationActionHistoryTable(table))
@@ -211,7 +212,7 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, dat
         rows.append(row)
         remainder = next_remainder
 
-    if rows[0][-1] == "Vanity callsign(s)applied for":
+    if rows[0][-1] == "Vanity callsign(s) applied for":
         # combine application rows and applied callsigns
         new_rows = []
         for row in rows:
@@ -223,7 +224,7 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, dat
                     new_cell += [x for x in r[9:] if x != ""]
                 new_row.append(tuple(new_cell))
                 new_rows.append(new_row)
-        new_rows[0][-1] = "Vanity callsign(s)applied for"
+        new_rows[0][-1] = "Vanity callsign(s) applied for"
         return new_rows
 
     return rows
@@ -231,7 +232,7 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, dat
 
 def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
     # gets the (better-formatted) cell text. If in certain formats, it will convert to datetime.
-    text = " ".join(cell.getText().split())
+    text = " ".join(cell.stripped_strings)
     if re.fullmatch(r"\w{3} \d{4}-\d{2}-\d{2}", text):
         text = datetime.strptime(text, "%a %Y-%m-%d")
     elif re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
