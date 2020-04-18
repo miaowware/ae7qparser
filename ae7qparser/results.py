@@ -47,6 +47,7 @@ class Ae7qCallData(Ae7qData):
         self.call_history = None
         self.trustee_history = None
         self.application_history = None
+        self.pending_applications = None
 
         for table in tables:
             if self.conditions is None and isinstance(table, ConditionsTable):
@@ -57,6 +58,8 @@ class Ae7qCallData(Ae7qData):
                 self.trustee_history = table
             elif self.application_history is None and isinstance(table, ApplicationsHistoryTable):
                 self.application_history = table
+            elif self.pending_applications is None and isinstance(table, CallsignPendingApplicationsPredictionsTable):
+                self.pending_applications = table
 
 
 class Ae7qCanadianCallData(Ae7qData):

@@ -142,7 +142,7 @@ class ApplicationsHistoryRow(Row):
         application_callsign
         region_state
         entity_name
-        uls_file_number
+        uls_file_number: a tuple of the file number and the filing type as strings
         application_purpose
         payment_date
         last_action_date
@@ -157,7 +157,8 @@ class ApplicationsHistoryRow(Row):
         self.application_callsign = row_data[1]
         self.region_state = row_data[2]
         self.entity_name = row_data[3]
-        self.uls_file_number = row_data[4].strip("(Batch)").strip("(Online)")
+        ufn = row_data[4].split(" ")
+        self.uls_file_number = (ufn[0], ufn[1].strip("()"))
         self.application_purpose = row_data[5]
         self.payment_date = row_data[6]
         self.last_action_date = row_data[7]
@@ -168,7 +169,7 @@ class ApplicationsHistoryTable(Table):
     row_cls = ApplicationsHistoryRow
 
 
-class VanityApplicationsHistoryRow(ApplicationsHistoryRow):
+class VanityApplicationsHistoryRow(Row):
     """VanityApplicationsHistoryRow
     ------
 
@@ -181,6 +182,15 @@ class VanityApplicationsHistoryRow(ApplicationsHistoryRow):
         row_data (Sequence): the data to store in the row.
 
     Attributes:
+        receipt_date
+        application_callsign
+        region_state
+        operator_class
+        uls_file_number: a tuple of the file number and the filing type as strings
+        application_purpose
+        payment_date
+        last_action_date
+        application_status
         applied_callsigns
 
     Properties:
@@ -188,6 +198,16 @@ class VanityApplicationsHistoryRow(ApplicationsHistoryRow):
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
+        self.receipt_date = row_data[0]
+        self.application_callsign = row_data[1]
+        self.region_state = row_data[2]
+        self.operator_class = row_data[3]
+        ufn = row_data[4].split(" ")
+        self.uls_file_number = (ufn[0], ufn[1].strip("()"))
+        self.application_purpose = row_data[5]
+        self.payment_date = row_data[6]
+        self.last_action_date = row_data[7]
+        self.application_status = row_data[8]
         self.applied_callsigns = row_data[9]
 
 
@@ -229,7 +249,7 @@ class PendingApplicationsPredictionsRow(Row):
         self.applicant_callsign = row_data[2]
         self.region_state = row_data[3]
         self.operator_class = row_data[4]
-        self.uls_file_number = row_data[5].strip("(Batch)").strip("(Online)")
+        self.uls_file_number = row_data[5]
         self.vanity_type = row_data[6]
         self.sequential_number = row_data[7]
         self.vanity_callsign = row_data[8]
@@ -238,6 +258,49 @@ class PendingApplicationsPredictionsRow(Row):
 
 class PendingApplicationsPredictionsTable(Table):
     row_cls = PendingApplicationsPredictionsRow
+
+
+class CallsignPendingApplicationsPredictionsRow(Row):
+    """CallsignPendingApplicationsPredictionsRow
+    ------
+
+    Class representing a CallsignPendingApplicationsPredictionsTable Row.
+    Initialised with the row's data.
+
+    The row's data can be accessed like a sequence.
+
+    Args:
+        row_data (Sequence): the data to store in the row.
+
+    Attributes:
+        receipt_date
+        process_date
+        applicant_callsign
+        operator_class
+        region_state
+        uls_file_number
+        vanity_type
+        sequential_number
+        prediction
+
+    Properties:
+        csv (str): returns the row data, with cells separated by semicolons.
+    """
+    def __init__(self, row_data: Sequence):
+        super().__init__(row_data)
+        self.receipt_date = row_data[0]
+        self.process_date = row_data[1]
+        self.applicant_callsign = row_data[2]
+        self.operator_class = row_data[3]
+        self.region_state = row_data[4]
+        self.uls_file_number = row_data[5]
+        self.vanity_type = row_data[6]
+        self.sequential_number = row_data[7]
+        self.prediction = row_data[8]
+
+
+class CallsignPendingApplicationsPredictionsTable(Table):
+    row_cls = CallsignPendingApplicationsPredictionsRow
 
 
 class EventCallsignRow(Row):

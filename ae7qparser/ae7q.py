@@ -271,7 +271,7 @@ def _assign_call_tables(tables: List[List[List]]):
 
         # PendingApplicationsPredictionsTable
         elif len(table[0]) == 10 and table[0][-1] == "Prediction":
-            out_tables.append(PendingApplicationsPredictionsTable(table))
+            out_tables.append(CallsignPendingApplicationsPredictionsTable(table))
 
         # otherwise, Table
         else:
