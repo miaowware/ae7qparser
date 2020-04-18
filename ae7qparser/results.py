@@ -94,7 +94,7 @@ class Ae7qCanadianCallData(Ae7qData):
         url = base_url + "data/CallHistory.php?CALL=" + query
         super().__init__(tables, query, url)
 
-        self.callsign_data = Table(tables[0])
+        self.callsign_data = Table(tables[0]) if len(tables) > 0 else None
 
         self.callsign = None
         self.given_names = None
@@ -108,29 +108,30 @@ class Ae7qCanadianCallData(Ae7qData):
         self.grid_square = None
         self.qualifications = None
 
-        for row in self.callsign_data:
-            if self.callsign is None and row[0] == "Callsign":
-                self.callsign = row[1]
-            elif self.given_names is None and row[0] == "Given Names":
-                self.given_names = row[1]
-            elif self.surname is None and row[0] == "Surname":
-                self.surname = row[1]
-            elif self.address is None and row[0] == "Street Address":
-                self.address = row[1]
-            elif self.locality is None and row[0] == "Locality":
-                self.locality = row[1]
-            elif self.province is None and row[0] == "Province":
-                self.province = row[1]
-            elif self.postal_code is None and row[0] == "Postal Code":
-                self.postal_code = row[1]
-            elif self.country is None and row[0] == "Country":
-                self.country = row[1]
-            elif self.region is None and row[0] == "Region":
-                self.region = row[1]
-            elif self.grid_square is None and row[0] == "Maidenhead":
-                self.grid_square = row[1]
-            elif self.qualifications is None and row[0] == "Qualifications":
-                self.qualifications = row[1]
+        if self.callsign_data is not None:
+            for row in self.callsign_data:
+                if self.callsign is None and row[0] == "Callsign":
+                    self.callsign = row[1]
+                elif self.given_names is None and row[0] == "Given Names":
+                    self.given_names = row[1]
+                elif self.surname is None and row[0] == "Surname":
+                    self.surname = row[1]
+                elif self.address is None and row[0] == "Street Address":
+                    self.address = row[1]
+                elif self.locality is None and row[0] == "Locality":
+                    self.locality = row[1]
+                elif self.province is None and row[0] == "Province":
+                    self.province = row[1]
+                elif self.postal_code is None and row[0] == "Postal Code":
+                    self.postal_code = row[1]
+                elif self.country is None and row[0] == "Country":
+                    self.country = row[1]
+                elif self.region is None and row[0] == "Region":
+                    self.region = row[1]
+                elif self.grid_square is None and row[0] == "Maidenhead":
+                    self.grid_square = row[1]
+                elif self.qualifications is None and row[0] == "Qualifications":
+                    self.qualifications = row[1]
 
 
 class Ae7qLicenseeData(Ae7qData):
