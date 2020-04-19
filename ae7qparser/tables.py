@@ -318,7 +318,7 @@ class EventCallsignRow(Row):
     Attributes:
         start_date
         end_date
-        event_callsign
+        callsign
         entity_name
         event_name
 
@@ -329,7 +329,7 @@ class EventCallsignRow(Row):
         super().__init__(row_data)
         self.start_date = row_data[0]
         self.end_date = row_data[1]
-        self.event_callsign = row_data[2]
+        self.callsign = row_data[2]
         self.entity_name = row_data[3]
         self.event_name = row_data[4]
 

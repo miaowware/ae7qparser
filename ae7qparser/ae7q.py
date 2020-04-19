@@ -14,9 +14,29 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup, element
 
-from .base import *
-from .tables import *
-from .results import *
+from .base import Table
+from .tables import (
+            ConditionsTable,
+            CallHistoryTable,
+            TrusteeTable,
+            ApplicationsHistoryTable,
+            VanityApplicationsHistoryTable,
+            PendingApplicationsPredictionsTable,
+            CallsignPendingApplicationsPredictionsTable,
+            EventCallsignTable,
+            FrnHistoryTable,
+            LicenseeIdHistoryTable,
+            ApplicationActionHistoryTable,
+            ApplicationVanityCallsignsTable,
+            ApplicationAttachmentsTable,
+        )
+from .results import (
+            Ae7qCallData,
+            Ae7qCanadianCallData,
+            Ae7qFrnData,
+            Ae7qLicenseeData,
+            Ae7qApplicationData,
+        )
 
 
 base_url = "http://ae7q.com/query/"

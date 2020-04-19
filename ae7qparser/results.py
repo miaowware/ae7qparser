@@ -9,8 +9,22 @@ Released under the terms of the MIT license.
 
 from typing import Sequence
 
-from .base import *
-from .tables import *
+from .base import Table, Ae7qData
+from .tables import (
+            ConditionsTable,
+            CallHistoryTable,
+            TrusteeTable,
+            ApplicationsHistoryTable,
+            VanityApplicationsHistoryTable,
+            PendingApplicationsPredictionsTable,
+            CallsignPendingApplicationsPredictionsTable,
+            EventCallsignTable,
+            FrnHistoryTable,
+            LicenseeIdHistoryTable,
+            ApplicationActionHistoryTable,
+            ApplicationVanityCallsignsTable,
+            ApplicationAttachmentsTable,
+        )
 
 
 base_url = "http://ae7q.com/query/"
@@ -38,6 +52,7 @@ class Ae7qCallData(Ae7qData):
         call_history (CallHistoryTable): table of the callsign holder history.
         trustee_history (TrusteeTable): table of any callsigns the callsign holder has been trustee of.
         application_history (ApplicationsHistoryTable): table of applications for the callsign.
+        event_callsign_history (EventCallsignTable): table of event callsign holder history.
     """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/CallHistory.php?CALL=" + query
@@ -48,6 +63,7 @@ class Ae7qCallData(Ae7qData):
         self.trustee_history = None
         self.application_history = None
         self.pending_applications = None
+        self.event_callsign_history = None
 
         for table in tables:
             if self.conditions is None and isinstance(table, ConditionsTable):
@@ -60,6 +76,8 @@ class Ae7qCallData(Ae7qData):
                 self.application_history = table
             elif self.pending_applications is None and isinstance(table, CallsignPendingApplicationsPredictionsTable):
                 self.pending_applications = table
+            elif self.event_callsign_history is None and isinstance(table, EventCallsignTable):
+                self.event_callsign_history = table
 
 
 class Ae7qCanadianCallData(Ae7qData):
