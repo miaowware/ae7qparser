@@ -358,90 +358,91 @@ class Ae7qApplicationData(Ae7qData):
         self.trustee_callsign = None
         self.trustee_name = None
 
-        for row in self.application_data:
-            if self.frn is None and row[0] == "FRN":
-                self.frn = row[1]
-            elif self.licensee_id is None and row[0] == "Licensee ID/SGIN":
-                self.licensee_id = row[1]
-            elif self.applicant_type is None and row[0] == "Applicant Type":
-                self.applicant_type = row[1]
-            elif self.entity_type is None and row[0] == "Entity Type":
-                self.entity_type = row[1]
-            elif self.entity_name is None and row[0] == "Entity Name":
-                self.entity_name = row[1]
-            elif self.attention is None and row[0] == "Attention":
-                self.attention = row[1]
-            elif self.first_name is None and row[0] == "First Name":
-                self.first_name = row[1]
-            elif self.middle_initial is None and row[0] == "Middle Init":
-                self.middle_initial = row[1]
-            elif self.last_name is None and row[0] == "Last Name":
-                self.last_name = row[1]
-            elif self.name_suffix is None and row[0] == "Name Suffix":
-                self.name_suffix = row[1]
-            elif self.street_address is None and row[0] == "Street Address":
-                self.street_address = row[1]
-            elif self.po_box is None and row[0] == "Po Box":
-                self.po_box = row[1]
-            elif self.locality is None and row[0] == "Locality":
-                self.locality = row[1]
-            elif self.county is None and row[0] == "County":
-                self.county = row[1]
-            elif self.state is None and row[0] == "State":
-                self.state = row[1]
-            elif self.postal_code is None and row[0] == "Postal Code":
-                self.postal_code = row[1]
-            elif (self.zip_location is None or len(self.zip_location) == 1) and row[0] == "Zip Location":
-                if self.zip_location is None:
-                    self.zip_location = [row[1], ]
-                else:
-                    self.zip_location.append(row[1])
-                    self.zip_location = tuple(self.zip_location)
-            elif self.maidenhead is None and row[0] == "Maidenhead":
-                self.maidenhead = row[1]
-            elif self.uls_geo_region is None and row[0] == "ULS/Geo Region":
-                self.uls_geo_region = row[1]
-            elif self.callsign is None and row[0] == "Callsign":
-                self.callsign = row[1]
-            elif self.radio_service is None and row[0] == "Radio Service":
-                self.radio_service = row[1]
-            elif self.last_action_date is None and row[0] == "Last Action Date":
-                self.last_action_date = row[1]
-            elif self.receipt_date is None and row[0] == "Receipt Date":
-                self.receipt_date = row[1]
-            elif self.entered_timestamp is None and row[0] == "Entered Timestamp":
-                self.entered_timestamp = row[1]
-            elif self.application_source is None and row[0] == "App Source":
-                self.application_source = row[1]
-            elif self.original_purpose is None and row[0] == "Orig Purpose":
-                self.original_purpose = row[1]
-            elif self.application_purpose is None and row[0] == "App Purpose":
-                self.application_purpose = row[1]
-            elif self.result is None and row[0] == "Result":
-                self.result = row[1]
-            elif self.fee_control_number is None and row[0] == "Fee Control Num":
-                self.fee_control_number = row[1]
-            elif self.payment_date is None and row[0] == "Payment Date":
-                self.payment_date = row[1]
-            elif self.original_receipt is None and row[0] == "Orig Receipt":
-                self.original_receipt = row[1]
-            elif self.operator_class is None and row[0] == "Operator Class":
-                self.operator_class = row[1]
-            elif self.operator_group is None and row[0] == "Operator Group":
-                self.operator_group = row[1]
-            elif self.uls_group is None and row[0] == "Uls Group":
-                self.uls_group = row[1]
-            elif self.new_sequential_callsign is None and row[0] == "New Seq Callsign":
-                self.new_sequential_callsign = True if row[1] == "Y" else False
-            elif self.vanity_type is None and row[0] == "Vanity Type":
-                self.vanity_type = row[1]
-            elif self.vanity_relationship is None and row[0] == "Vanity Relationship":
-                self.vanity_relationship = row[1]
-            elif self.is_from_vec is None and row[0] == "Is From Vec":
-                self.is_from_vec = True if row[1] == "Y" else False
-            elif self.is_trustee is None and row[0] == "Is Trustee":
-                self.is_trustee = True if row[1] == "Y" else False
-            elif self.trustee_callsign is None and row[0] == "Trustee Callsign":
-                self.trustee_callsign = row[1]
-            elif self.trustee_name is None and row[0] == "Trustee Name":
-                self.trustee_name = row[1]
+        if self.application_data is not None:
+            for row in self.application_data:
+                if self.frn is None and row[0] == "FRN":
+                    self.frn = row[1]
+                elif self.licensee_id is None and row[0] == "Licensee ID/SGIN":
+                    self.licensee_id = row[1]
+                elif self.applicant_type is None and row[0] == "Applicant Type":
+                    self.applicant_type = row[1]
+                elif self.entity_type is None and row[0] == "Entity Type":
+                    self.entity_type = row[1]
+                elif self.entity_name is None and row[0] == "Entity Name":
+                    self.entity_name = row[1]
+                elif self.attention is None and row[0] == "Attention":
+                    self.attention = row[1]
+                elif self.first_name is None and row[0] == "First Name":
+                    self.first_name = row[1]
+                elif self.middle_initial is None and row[0] == "Middle Init":
+                    self.middle_initial = row[1]
+                elif self.last_name is None and row[0] == "Last Name":
+                    self.last_name = row[1]
+                elif self.name_suffix is None and row[0] == "Name Suffix":
+                    self.name_suffix = row[1]
+                elif self.street_address is None and row[0] == "Street Address":
+                    self.street_address = row[1]
+                elif self.po_box is None and row[0] == "Po Box":
+                    self.po_box = row[1]
+                elif self.locality is None and row[0] == "Locality":
+                    self.locality = row[1]
+                elif self.county is None and row[0] == "County":
+                    self.county = row[1]
+                elif self.state is None and row[0] == "State":
+                    self.state = row[1]
+                elif self.postal_code is None and row[0] == "Postal Code":
+                    self.postal_code = row[1]
+                elif (self.zip_location is None or len(self.zip_location) == 1) and row[0] == "Zip Location":
+                    if self.zip_location is None:
+                        self.zip_location = [row[1], ]
+                    else:
+                        self.zip_location.append(row[1])
+                        self.zip_location = tuple(self.zip_location)
+                elif self.maidenhead is None and row[0] == "Maidenhead":
+                    self.maidenhead = row[1]
+                elif self.uls_geo_region is None and row[0] == "ULS/Geo Region":
+                    self.uls_geo_region = row[1]
+                elif self.callsign is None and row[0] == "Callsign":
+                    self.callsign = row[1]
+                elif self.radio_service is None and row[0] == "Radio Service":
+                    self.radio_service = row[1]
+                elif self.last_action_date is None and row[0] == "Last Action Date":
+                    self.last_action_date = row[1]
+                elif self.receipt_date is None and row[0] == "Receipt Date":
+                    self.receipt_date = row[1]
+                elif self.entered_timestamp is None and row[0] == "Entered Timestamp":
+                    self.entered_timestamp = row[1]
+                elif self.application_source is None and row[0] == "App Source":
+                    self.application_source = row[1]
+                elif self.original_purpose is None and row[0] == "Orig Purpose":
+                    self.original_purpose = row[1]
+                elif self.application_purpose is None and row[0] == "App Purpose":
+                    self.application_purpose = row[1]
+                elif self.result is None and row[0] == "Result":
+                    self.result = row[1]
+                elif self.fee_control_number is None and row[0] == "Fee Control Num":
+                    self.fee_control_number = row[1]
+                elif self.payment_date is None and row[0] == "Payment Date":
+                    self.payment_date = row[1]
+                elif self.original_receipt is None and row[0] == "Orig Receipt":
+                    self.original_receipt = row[1]
+                elif self.operator_class is None and row[0] == "Operator Class":
+                    self.operator_class = row[1]
+                elif self.operator_group is None and row[0] == "Operator Group":
+                    self.operator_group = row[1]
+                elif self.uls_group is None and row[0] == "Uls Group":
+                    self.uls_group = row[1]
+                elif self.new_sequential_callsign is None and row[0] == "New Seq Callsign":
+                    self.new_sequential_callsign = True if row[1] == "Y" else False
+                elif self.vanity_type is None and row[0] == "Vanity Type":
+                    self.vanity_type = row[1]
+                elif self.vanity_relationship is None and row[0] == "Vanity Relationship":
+                    self.vanity_relationship = row[1]
+                elif self.is_from_vec is None and row[0] == "Is From Vec":
+                    self.is_from_vec = True if row[1] == "Y" else False
+                elif self.is_trustee is None and row[0] == "Is Trustee":
+                    self.is_trustee = True if row[1] == "Y" else False
+                elif self.trustee_callsign is None and row[0] == "Trustee Callsign":
+                    self.trustee_callsign = row[1]
+                elif self.trustee_name is None and row[0] == "Trustee Name":
+                    self.trustee_name = row[1]
