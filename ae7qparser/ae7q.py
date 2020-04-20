@@ -16,32 +16,31 @@ from bs4 import BeautifulSoup, element
 
 from .base import Table
 from .tables import (
-            ConditionsTable,
-            CallHistoryTable,
-            TrusteeTable,
-            ApplicationsHistoryTable,
-            VanityApplicationsHistoryTable,
-            PendingApplicationsPredictionsTable,
-            CallsignPendingApplicationsPredictionsTable,
-            EventCallsignTable,
-            FrnHistoryTable,
-            LicenseeIdHistoryTable,
-            ApplicationActionHistoryTable,
-            ApplicationVanityCallsignsTable,
-            ApplicationAttachmentsTable,
-        )
+    ConditionsTable,
+    CallHistoryTable,
+    TrusteeTable,
+    ApplicationsHistoryTable,
+    VanityApplicationsHistoryTable,
+    PendingApplicationsPredictionsTable,
+    CallsignPendingApplicationsPredictionsTable,
+    EventCallsignTable,
+    FrnHistoryTable,
+    LicenseeIdHistoryTable,
+    ApplicationActionHistoryTable,
+    ApplicationVanityCallsignsTable,
+    ApplicationAttachmentsTable,
+)
 from .results import (
-            Ae7qCallData,
-            Ae7qCanadianCallData,
-            Ae7qFrnData,
-            Ae7qLicenseeData,
-            Ae7qApplicationData,
-        )
-
-
-base_url = "http://ae7q.com/query/"
-
-ca_pfx = ["va", "ve", "vo", "vy", "cy"]
+    Ae7qCallData,
+    Ae7qCanadianCallData,
+    Ae7qFrnData,
+    Ae7qLicenseeData,
+    Ae7qApplicationData,
+)
+from .utils import (
+    base_url,
+    ca_pfx,
+)
 
 
 # ------ PUBLIC FUNCTIONS ------

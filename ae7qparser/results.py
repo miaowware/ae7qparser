@@ -11,23 +11,21 @@ from typing import Sequence
 
 from .base import Table, Ae7qData
 from .tables import (
-            ConditionsTable,
-            CallHistoryTable,
-            TrusteeTable,
-            ApplicationsHistoryTable,
-            VanityApplicationsHistoryTable,
-            PendingApplicationsPredictionsTable,
-            CallsignPendingApplicationsPredictionsTable,
-            EventCallsignTable,
-            FrnHistoryTable,
-            LicenseeIdHistoryTable,
-            ApplicationActionHistoryTable,
-            ApplicationVanityCallsignsTable,
-            ApplicationAttachmentsTable,
-        )
-
-
-base_url = "http://ae7q.com/query/"
+    ConditionsTable,
+    CallHistoryTable,
+    TrusteeTable,
+    ApplicationsHistoryTable,
+    VanityApplicationsHistoryTable,
+    PendingApplicationsPredictionsTable,
+    CallsignPendingApplicationsPredictionsTable,
+    EventCallsignTable,
+    FrnHistoryTable,
+    LicenseeIdHistoryTable,
+    ApplicationActionHistoryTable,
+    ApplicationVanityCallsignsTable,
+    ApplicationAttachmentsTable,
+)
+from .utils import base_url
 
 
 class Ae7qCallData(Ae7qData):

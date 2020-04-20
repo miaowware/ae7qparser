@@ -48,6 +48,6 @@ optional arguments:
 
 ## Copyright
 
-Copyright 2019 classabbyamp, 0x5c  
+Copyright 2020 classabbyamp, 0x5c  
 Released under the MIT License.  
 See `LICENSE` for the full license text.
