@@ -115,7 +115,7 @@ class Ae7qCanadianCallData(Ae7qData):
         url = base_url + "data/CallHistory.php?CALL=" + query
         super().__init__(tables, query, url)
 
-        self.callsign_data = Table(tables[0]) if len(tables) > 0 else None
+        self.callsign_data = tables[0] if len(tables) > 0 else None
 
         self.callsign = None
         self.given_names = None

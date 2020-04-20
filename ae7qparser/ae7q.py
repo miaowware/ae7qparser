@@ -67,7 +67,7 @@ def get_call(callsign: str) -> Union[Ae7qCallData, Ae7qCanadianCallData]:
 
     parsed_tables = _assign_call_tables(processed_tables)
 
-    if callsign[0:2] in ca_pfx:
+    if callsign[0:2].lower() in ca_pfx:
         return Ae7qCanadianCallData(parsed_tables, callsign)
     else:
         return Ae7qCallData(parsed_tables, callsign)
@@ -252,7 +252,7 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, dat
 
 def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
     # gets the (better-formatted) cell text. If in certain formats, it will convert to datetime.
-    text = " ".join(cell.stripped_strings)
+    text = " ".join([" ".join(x.split()) for x in cell.stripped_strings])
     if re.fullmatch(r"\w{3} \d{4}-\d{2}-\d{2}", text):
         text = datetime.strptime(text, "%a %Y-%m-%d")
     elif re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
