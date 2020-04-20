@@ -7,19 +7,23 @@ Released under the terms of the MIT license.
 """
 
 import argparse
+import sys
 
 import ae7qparser
 
 
 parser = argparse.ArgumentParser(prog="ae7qparser", description="Retrieve and parse AE7Q data")
 parser.add_argument("-c", "--call", required=False, metavar="CALL", nargs="*",
-                    help="Get AE7Q data for a callsign")
+                    help="Get AE7Q data for callsigns")
 parser.add_argument("-f", "--frn", required=False, metavar="FRN", nargs="*",
-                    help="Get AE7Q data for an FRN")
+                    help="Get AE7Q data for FRNs")
 parser.add_argument("-l", "--lic", required=False, metavar="LID", nargs="*",
-                    help="Get AE7Q data for a Licensee ID")
+                    help="Get AE7Q data for Licensee IDs")
 parser.add_argument("-a", "--app", required=False, metavar="UFN", nargs="*",
-                    help="Get AE7Q data for a ULS File Number")
+                    help="Get AE7Q data for ULS File Numbers")
+if len(sys.argv)==1:
+    parser.print_help(sys.stderr)
+    sys.exit(1)
 args = parser.parse_args()
 
 
