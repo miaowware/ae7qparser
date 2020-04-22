@@ -280,6 +280,10 @@ def _assign_call_tables(tables: List[List[List]]):
         elif len(table[0]) == 1 and len(table[1]) == 9 and table[1][0] == "Callsign":
             out_tables.append(TrusteeTable(table, 1))
 
+        # CallsignPendingApplicationsPredictionsTable
+        elif table[0][-1] == "Prediction":
+            out_tables.append(CallsignPendingApplicationsPredictionsTable(table))
+
         # ApplicationsHistoryTable
         elif len(table[0]) == 9 and table[0][0] == "Receipt Date":
             out_tables.append(ApplicationsHistoryTable(table))
@@ -287,10 +291,6 @@ def _assign_call_tables(tables: List[List[List]]):
         # EventCallsignTable
         elif len(table[0]) == 5 and table[0][0] == "Start Date":
             out_tables.append(EventCallsignTable(table))
-
-        # PendingApplicationsPredictionsTable
-        elif len(table[0]) == 10 and table[0][-1] == "Prediction":
-            out_tables.append(CallsignPendingApplicationsPredictionsTable(table))
 
         # otherwise, Table
         else:
