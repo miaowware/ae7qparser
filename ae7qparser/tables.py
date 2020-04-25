@@ -7,514 +7,133 @@ Released under the terms of the MIT license.
 """
 
 
+import collections.abc as abc
 from typing import Sequence
 
-from .base import Row, Table
 
-
-class ConditionsRow(Row):
-    """ConditionsRow
+class Table(abc.Sequence):
+    """Table
     ------
 
-    Class representing a ConditionsTable Row.
-    Initialised with the row's data.
+    Class representing a Table.
+    Initialised with a nested sequence and (optionally) a row to use as column headers.
 
-    The row's data can be accessed like a sequence.
+    The table's data can be accessed like a sequence.
 
     Args:
-        row_data (Sequence): the data to store in the row.
+        data (Sequence[Sequence]): the data to be stored in the Table.
+        header_row (int): the row to store as column names. If not provided, the first row will be used. If -1, no row
+            will be used as column names.
 
     Attributes:
-        conditions (str)
+        col_names (Sequence): the names of each column in the table.
+        row_cls (Row): the class to use for the Table's rows. By default, the class is Row.
 
     Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+        csv (str): returns each row's data separated by semicolons, with each row separated by a newline. It includes
+            column names.
+        csv_pretty (str): returns each row's data, separated by pipes, with each row separated by a newline. It includes
+            column names.
     """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.conditions = row_data[0]
+    row_cls = Row  # Class attribute
+
+    def __init__(self, data: Sequence[Sequence], header_row: int = 0):
+        if header_row == -1:
+            self.col_names = None
+        else:
+            self.col_names = Row(data[header_row])
+        header_row += 1
+
+        rows = []
+        for row_data in data[header_row:]:
+            rows.append(self.row_cls(row_data))
+        self._data = tuple(rows)  # Making the data immutable
+
+    @property
+    def csv(self) -> str:
+        csv = self.col_names.csv + "\n" if self.col_names is not None else ""
+        csv += "\n".join([row.csv for row in self._data])
+        return csv
+
+    @property
+    def csv_pretty(self) -> str:
+        csv_out = ""
+        csv = [self.col_names.csv.split(";")] if self.col_names is not None else []
+        csv += [row.csv.split(";") for row in self._data]
+        maxes = []
+        for i in range(0, len(csv[-1])):
+            maxes.append(max([len(str(x[i])) for x in csv]))
+
+        for i, row in enumerate(csv):
+            for j in range(0, len(csv[0])):
+                csv_out += f"{row[j]:<{maxes[j]}}"
+                if j != len(csv[0]) - 1:
+                    csv_out += " | "
+            if i != len(csv) - 1:
+                csv_out += "\n"
+
+        return csv_out
+
+    def __str__(self):
+        return str(tuple([str(row) for row in self._data]))
+
+    # --- Wrappers to implement sequence-like functionality ---
+    def __len__(self):
+        return len(self._data)
+
+    def __getitem__(self, index: int):
+        return self._data[index]
+
+    def __iter__(self):
+        return iter(self._data)
 
 
 class ConditionsTable(Table):
     row_cls = ConditionsRow  # Class attribute
 
 
-class CallHistoryRow(Row):
-    """CallHistoryRow
-    ------
-
-    Class representing a CallHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        entity_name
-        applicant_type
-        operator_class
-        region_state
-        license_status
-        grant_date
-        effective_date
-        cancel_date
-        expire_date
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.entity_name = row_data[0]
-        self.applicant_type = row_data[1]
-        self.operator_class = row_data[2]
-        self.region_state = row_data[3]
-        self.license_status = row_data[4]
-        self.grant_date = row_data[5]
-        self.effective_date = row_data[6]
-        self.cancel_date = row_data[7]
-        self.expire_date = row_data[8]
-
-
 class CallHistoryTable(Table):
     row_cls = CallHistoryRow
-
-
-class TrusteeRow(Row):
-    """TrusteeRow
-    ------
-
-    Class representing a TrusteeTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        callsign
-        region_state
-        entity_name
-        applicant_type
-        license_status
-        grant_date
-        effective_date
-        cancel_date
-        expire_date
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.callsign = row_data[0]
-        self.region_state = row_data[1]
-        self.entity_name = row_data[2]
-        self.applicant_type = row_data[3]
-        self.license_status = row_data[4]
-        self.grant_date = row_data[5]
-        self.effective_date = row_data[6]
-        self.cancel_date = row_data[7]
-        self.expire_date = row_data[8]
 
 
 class TrusteeTable(Table):
     row_cls = TrusteeRow
 
 
-class ApplicationsHistoryRow(Row):
-    """ApplicationsHistoryRow
-    ------
-
-    Class representing a ApplicationsHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        receipt_date
-        application_callsign
-        region_state
-        entity_name
-        uls_file_number: a tuple of the file number and the filing type as strings
-        application_purpose
-        payment_date
-        last_action_date
-        application_status
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.receipt_date = row_data[0]
-        self.application_callsign = row_data[1]
-        self.region_state = row_data[2]
-        self.entity_name = row_data[3]
-        ufn = row_data[4].split(" ")
-        self.uls_file_number = (ufn[0], ufn[1].strip("()"))
-        self.application_purpose = row_data[5]
-        self.payment_date = row_data[6]
-        self.last_action_date = row_data[7]
-        self.application_status = row_data[8]
-
-
 class ApplicationsHistoryTable(Table):
     row_cls = ApplicationsHistoryRow
-
-
-class VanityApplicationsHistoryRow(Row):
-    """VanityApplicationsHistoryRow
-    ------
-
-    Class representing a VanityApplicationsHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        receipt_date
-        application_callsign
-        region_state
-        operator_class
-        uls_file_number: a tuple of the file number and the filing type as strings
-        application_purpose
-        payment_date
-        last_action_date
-        application_status
-        applied_callsigns
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.receipt_date = row_data[0]
-        self.application_callsign = row_data[1]
-        self.region_state = row_data[2]
-        self.operator_class = row_data[3]
-        ufn = row_data[4].split(" ")
-        self.uls_file_number = (ufn[0], ufn[1].strip("()"))
-        self.application_purpose = row_data[5]
-        self.payment_date = row_data[6]
-        self.last_action_date = row_data[7]
-        self.application_status = row_data[8]
-        self.applied_callsigns = row_data[9]
 
 
 class VanityApplicationsHistoryTable(Table):
     row_cls = VanityApplicationsHistoryRow
 
 
-class PendingApplicationsPredictionsRow(Row):
-    """PendingApplicationsPredictionsRow
-    ------
-
-    Class representing a PendingApplicationsPredictionsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        receipt_date
-        process_date
-        applicant_callsign
-        region_state
-        operator_class
-        uls_file_number
-        vanity_type
-        sequential_number
-        vanity_callsign
-        prediction
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.receipt_date = row_data[0]
-        self.process_date = row_data[1]
-        self.applicant_callsign = row_data[2]
-        self.region_state = row_data[3]
-        self.operator_class = row_data[4]
-        self.uls_file_number = row_data[5]
-        self.vanity_type = row_data[6]
-        self.sequential_number = row_data[7]
-        self.vanity_callsign = row_data[8]
-        self.prediction = row_data[9]
-
-
 class PendingApplicationsPredictionsTable(Table):
     row_cls = PendingApplicationsPredictionsRow
-
-
-class CallsignPendingApplicationsPredictionsRow(Row):
-    """CallsignPendingApplicationsPredictionsRow
-    ------
-
-    Class representing a CallsignPendingApplicationsPredictionsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        receipt_date
-        process_date
-        applicant_callsign
-        operator_class
-        region_state
-        uls_file_number
-        vanity_type
-        sequential_number
-        prediction
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.receipt_date = row_data[0]
-        self.process_date = row_data[1]
-        self.applicant_callsign = row_data[2]
-        self.operator_class = row_data[3]
-        self.region_state = row_data[4]
-        self.uls_file_number = row_data[5]
-        self.vanity_type = row_data[6]
-        self.sequential_number = row_data[7]
-        self.prediction = row_data[8]
 
 
 class CallsignPendingApplicationsPredictionsTable(Table):
     row_cls = CallsignPendingApplicationsPredictionsRow
 
 
-class EventCallsignRow(Row):
-    """EventCallsignRow
-    ------
-
-    Class representing a EventCallsignTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        start_date
-        end_date
-        callsign
-        entity_name
-        event_name
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.start_date = row_data[0]
-        self.end_date = row_data[1]
-        self.callsign = row_data[2]
-        self.entity_name = row_data[3]
-        self.event_name = row_data[4]
-
-
 class EventCallsignTable(Table):
     row_cls = EventCallsignRow
-
-
-class FrnHistoryRow(Row):
-    """FrnHistoryRow
-    ------
-
-    Class representing a FrnHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        callsign
-        region_state
-        entity_name
-        applicant_type
-        operator_class
-        license_status
-        grant_date
-        effective_date
-        cancel_date
-        expire_date
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.callsign = row_data[0]
-        self.region_state = row_data[1]
-        self.entity_name = row_data[2]
-        self.applicant_type = row_data[3]
-        self.operator_class = row_data[4]
-        self.license_status = row_data[5]
-        self.grant_date = row_data[6]
-        self.effective_date = row_data[7]
-        self.cancel_date = row_data[8]
-        self.expire_date = row_data[9]
 
 
 class FrnHistoryTable(Table):
     row_cls = FrnHistoryRow
 
 
-class LicenseeIdHistoryRow(Row):
-    """LicenseeIdHistoryRow
-    ------
-
-    Class representing a LicenseeIdHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        callsign
-        region_state
-        entity_name
-        applicant_type
-        operator_class
-        license_status
-        grant_date
-        effective_date
-        cancel_date
-        expire_date
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.callsign = row_data[0]
-        self.region_state = row_data[1]
-        self.entity_name = row_data[2]
-        self.applicant_type = row_data[3]
-        self.operator_class = row_data[4]
-        self.license_status = row_data[5]
-        self.grant_date = row_data[6]
-        self.effective_date = row_data[7]
-        self.cancel_date = row_data[8]
-        self.expire_date = row_data[9]
-
-
 class LicenseeIdHistoryTable(Table):
     row_cls = LicenseeIdHistoryRow
-
-
-class ApplicationActionHistoryRow(Row):
-    """ApplicationActionHistoryRow
-    ------
-
-    Class representing a ApplicationActionHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        action_date
-        action_type
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.action_date = row_data[0]
-        self.action_type = row_data[1]
 
 
 class ApplicationActionHistoryTable(Table):
     row_cls = ApplicationActionHistoryRow
 
 
-class ApplicationVanityCallsignsRow(Row):
-    """ApplicationVanityCallsignsRow
-    ------
-
-    Class representing a ApplicationVanityCallsignsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        sequence_number
-        callsign
-        prediction
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.sequence_number = row_data[0]
-        self.callsign = row_data[1]
-        self.prediction = row_data[2] if len(row_data) == 3 else None
-
-
 class ApplicationVanityCallsignsTable(Table):
     row_cls = ApplicationVanityCallsignsRow
-
-
-class ApplicationAttachmentsRow(Row):
-    """ApplicationAttachmentsRow
-    ------
-
-    Class representing a ApplicationAttachmentsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        date
-        type
-        description
-        result
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
-    """
-    def __init__(self, row_data: Sequence):
-        super().__init__(row_data)
-        self.date = row_data[0]
-        self.type = row_data[1]
-        self.description = row_data[2]
-        self.result = row_data[3]
 
 
 class ApplicationAttachmentsTable(Table):

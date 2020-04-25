@@ -8,24 +8,42 @@ Released under the terms of the MIT license.
 
 
 from typing import Sequence
+from datetime import datetime
 
-from .base import Table, Ae7qData
-from .tables import (
-    ConditionsTable,
-    CallHistoryTable,
-    TrusteeTable,
-    ApplicationsHistoryTable,
-    VanityApplicationsHistoryTable,
-    PendingApplicationsPredictionsTable,
-    CallsignPendingApplicationsPredictionsTable,
-    EventCallsignTable,
-    FrnHistoryTable,
-    LicenseeIdHistoryTable,
-    ApplicationActionHistoryTable,
-    ApplicationVanityCallsignsTable,
-    ApplicationAttachmentsTable,
-)
+from .tables import *
 from .utils import base_url
+
+
+class Ae7qData:
+    """Ae7qData
+    ------
+
+    Class representing Ae7qData.
+    Initialised with a sequence of Tables, a query, and a query_url.
+
+    Args:
+        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+
+    Attributes:
+        tables (tuple[Table]): the tables stored in the Ae7qData object.
+        query (str): the query used to generate the data in this Ae7qData object.
+        query_url (str): the URL of the query.
+        query_time (DateTime): the time at which the query was executed.
+    """
+    def __init__(self, tables: Sequence[Table], query: str, query_url: str):
+        self.tables = tuple(tables)
+        self.query = query
+        self.query_url = query_url
+        self.query_time = datetime.utcnow()
+
+    def __repr__(self):
+        type_ = type(self)
+        module = type_.__module__
+        qualname = type_.__qualname__
+        return (f"<{module}.{qualname} object at {hex(id(self))}, "
+                f"query={self.query}, query_time={self.query_time}>")
 
 
 class Ae7qCallData(Ae7qData):
