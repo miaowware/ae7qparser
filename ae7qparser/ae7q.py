@@ -14,33 +14,17 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup, element
 
-from .base import Table
-from .tables import (
-    ConditionsTable,
-    CallHistoryTable,
-    TrusteeTable,
-    ApplicationsHistoryTable,
-    VanityApplicationsHistoryTable,
-    PendingApplicationsPredictionsTable,
-    CallsignPendingApplicationsPredictionsTable,
-    EventCallsignTable,
-    FrnHistoryTable,
-    LicenseeIdHistoryTable,
-    ApplicationActionHistoryTable,
-    ApplicationVanityCallsignsTable,
-    ApplicationAttachmentsTable,
-)
-from .results import (
-    Ae7qCallData,
-    Ae7qCanadianCallData,
-    Ae7qFrnData,
-    Ae7qLicenseeData,
-    Ae7qApplicationData,
-)
-from .utils import (
-    base_url,
-    ca_pfx,
-)
+from .tables import *
+from .results import *
+from .utils import base_url, ca_pfx
+
+
+__all__ = [
+    "get_call",
+    "get_frn",
+    "get_licensee_id",
+    "get_application",
+]
 
 
 # ------ PUBLIC FUNCTIONS ------
