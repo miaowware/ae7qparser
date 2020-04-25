@@ -252,15 +252,21 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, dat
 def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
     # gets the (better-formatted) cell text. If in certain formats, it will convert to datetime.
     text = " ".join([" ".join(x.split()) for x in cell.stripped_strings])
+    out: Union[str, datetime]
+
     if re.fullmatch(r"\w{3} \d{4}-\d{2}-\d{2}", text):
-        text = datetime.strptime(text, "%a %Y-%m-%d")
+        out = datetime.strptime(text, "%a %Y-%m-%d")
     elif re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
-        text = datetime.strptime(text, "%Y-%m-%d")
+        out = datetime.strptime(text, "%Y-%m-%d")
     elif re.fullmatch(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", text):
-        text = datetime.strptime(text, "%Y-%m-%d %H:%M:%S")
+        out = datetime.strptime(text, "%Y-%m-%d %H:%M:%S")
+
     elif text == r"(none)":
-        text = ""
-    return text
+        out = ""
+    else:
+        out = text
+
+    return out
 
 
 def _assign_call_tables(tables: List[List[List]]):
