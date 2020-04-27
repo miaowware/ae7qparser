@@ -10,4 +10,16 @@ Released under the terms of the MIT license.
 
 
 from .__info__ import __version__   # noqa: F401
-from .ae7q import *                 # noqa: F401, F403
+from .dummy import *                # noqa: F401, F403
+try:
+    import requests                 # noqa: F401
+except ImportError:
+    pass
+else:
+    from .sync import *             # noqa: F401, F403
+try:
+    import aiohttp                  # noqa: F401
+except ImportError:
+    pass
+else:
+    from .asynch import *            # noqa: F401, F403

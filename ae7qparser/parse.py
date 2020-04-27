@@ -1,5 +1,5 @@
 """
-ae7q.py - part of miaowware/ae7qparser
+parse.py - part of miaowware/ae7qparser
 ---
 
 Copyright 2020 classabbyamp, 0x5c
@@ -11,7 +11,6 @@ from typing import Sequence, Union, List
 import re
 from datetime import datetime
 
-import requests
 from bs4 import BeautifulSoup, element
 
 from .tables import *
@@ -20,142 +19,26 @@ from .utils import base_url, ca_pfx
 
 
 __all__ = [
-    "get_call",
-    "get_frn",
-    "get_licensee_id",
-    "get_application",
+    "_parse_tables",
+    "_assign_call_tables",
+    "_assign_frn_tables",
+    "_assign_licensee_tables",
+    "_assign_application_tables",
 ]
 
 
-# ------ PUBLIC FUNCTIONS ------
-def get_call(callsign: str) -> Union[Ae7qCallData, Ae7qCanadianCallData]:
-    """
-    Gets AE7Q data for a callsign. Works with American and Canadian calls.
-
-    Args:
-        callsign (str): Callsign to lookup.
-
-    Returns:
-        An Ae7qCallData or Ae7qCanadianCallData object.
-    """
-    url = base_url + "data/CallHistory.php?CALL=" + callsign
-    request = requests.get(url)
-
-    html = request.text
-    soup = BeautifulSoup(html, features="html.parser")
-
-    tables = soup.find_all("table", "Database")
-
-    processed_tables = _parse_tables(tables)
-
-    parsed_tables = _assign_call_tables(processed_tables)
-
-    if callsign[0:2].lower() in ca_pfx:
-        return Ae7qCanadianCallData(parsed_tables, callsign)
-    else:
-        return Ae7qCallData(parsed_tables, callsign)
-
-
-def get_licensee_id(licensee_id: str) -> Ae7qLicenseeData:
-    """
-    Gets AE7Q data for a Licensee ID.
-
-    Args:
-        licensee_id (str): Licensee ID to lookup.
-
-    Returns:
-        An Ae7qLicenseeData object.
-    """
-    url = base_url + "data/LicenseeIdHistory.php?ID=" + licensee_id
-    request = requests.get(url)
-
-    html = request.text
-    soup = BeautifulSoup(html, features="html.parser")
-
-    tables = soup.find_all("table", "Database")
-
-    processed_tables = _parse_tables(tables)
-
-    parsed_tables = _assign_licensee_tables(processed_tables)
-
-    return Ae7qLicenseeData(parsed_tables, licensee_id)
-
-
-def get_frn(frn: str) -> Ae7qFrnData:
-    """
-    Gets AE7Q data for an FRN.
-
-    Args:
-        frn (str): FRN to lookup.
-
-    Returns:
-        An Ae7qFrnData object.
-    """
-    url = base_url + "data/FrnHistory.php?FRN=" + frn
-    request = requests.get(url)
-
-    html = request.text
-    soup = BeautifulSoup(html, features="html.parser")
-
-    tables = soup.find_all("table", "Database")
-
-    processed_tables = _parse_tables(tables)
-
-    parsed_tables = _assign_frn_tables(processed_tables)
-
-    return Ae7qFrnData(parsed_tables, frn)
-
-
-def get_application(app_id: str) -> Ae7qApplicationData:
-    """
-    Gets AE7Q data for a ULS File Number.
-
-    Args:
-        app_id (str): UFN to lookup.
-
-    Returns:
-        An Ae7qApplicationData object.
-    """
-    url = base_url + "data/AppDetail.php?UFN=" + app_id
-    request = requests.get(url)
-
-    html = request.text
-    soup = BeautifulSoup(html, features="html.parser")
-
-    tables = soup.find_all("table", "Database")
-
-    processed_tables = _parse_tables(tables)
-    parsed_tables = []
-
-    for table in processed_tables:
-        if table[0][0] == "Field Name":
-            table[1][1] = "Data"
-            parsed_tables.append(Table(table, 1))
-        elif table[0][0] == "Action Date":
-            parsed_tables.append(ApplicationActionHistoryTable(table))
-        elif table[0][0] == "Attachment records":
-            parsed_tables.append(ApplicationAttachmentsTable(table, 1))
-        elif table[0][1] == "Vanity Callsign":
-            parsed_tables.append(ApplicationVanityCallsignsTable(table))
-        else:
-            parsed_tables.append(Table(table))
-
-    return Ae7qApplicationData(parsed_tables, app_id)
-
-
-# ------ PRIVATE FUNCTIONS ------
 def _parse_tables(tables: Sequence[element.Tag]) -> List[List[List[Union[str, datetime]]]]:
     # converts a list of html tables to a list of lists of text or datetimes
     parsed_tables = []
 
     for table in tables:
         rows = table.find_all("tr")
-        parsed_tables.append(__parse_table_rows(rows))
+        parsed_tables.append(_parse_table_rows(rows))
 
     return parsed_tables
 
 
-def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, datetime]]]:
+def _parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, datetime]]]:
     # converts a table into rows of text or datetime
     rows = []
     remainder = []
@@ -174,7 +57,7 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, dat
                     next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
                 idx += 1
 
-            cell = __get_cell_text(td)
+            cell = _get_cell_text(td)
             try:
                 rowspan = int(td.attrs["rowspan"])
             except (ValueError, KeyError):  # catch %, attr not found
@@ -233,7 +116,7 @@ def __parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, dat
     return rows
 
 
-def __get_cell_text(cell: element.Tag) -> Union[str, datetime]:
+def _get_cell_text(cell: element.Tag) -> Union[str, datetime]:
     # gets the (better-formatted) cell text. If in certain formats, it will convert to datetime.
     text = " ".join([" ".join(x.split()) for x in cell.stripped_strings])
     out: Union[str, datetime]
@@ -332,4 +215,26 @@ def _assign_frn_tables(tables: List[List[List]]):
         else:
             out_tables.append(Table(table, -1))
 
+    return out_tables
+
+
+def _assign_application_tables(tables: List[List[List]]):
+    # create Table objects for an application query
+    out_tables = []
+    for table in tables:
+        # application data
+        if table[0][0] == "Field Name":
+            table[1][1] = "Data"
+            out_tables.append(Table(table, 1))
+        # action history
+        elif table[0][0] == "Action Date":
+            out_tables.append(ApplicationActionHistoryTable(table))
+        # attachments
+        elif table[0][0] == "Attachment records":
+            out_tables.append(ApplicationAttachmentsTable(table, 1))
+        # vanity calls
+        elif table[0][1] == "Vanity Callsign":
+            out_tables.append(ApplicationVanityCallsignsTable(table))
+        else:
+            out_tables.append(Table(table))
     return out_tables
