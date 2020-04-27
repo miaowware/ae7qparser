@@ -11,11 +11,24 @@ from typing import Sequence, Union, List
 import re
 from datetime import datetime
 
-from bs4 import BeautifulSoup, element
+from bs4 import element
 
-from .tables import *
-from .results import *
-from .utils import base_url, ca_pfx
+from .tables import (
+    Table,
+    ConditionsTable,
+    CallHistoryTable,
+    TrusteeTable,
+    ApplicationsHistoryTable,
+    VanityApplicationsHistoryTable,
+    PendingApplicationsPredictionsTable,
+    CallsignPendingApplicationsPredictionsTable,
+    EventCallsignTable,
+    FrnHistoryTable,
+    LicenseeIdHistoryTable,
+    ApplicationActionHistoryTable,
+    ApplicationVanityCallsignsTable,
+    ApplicationAttachmentsTable,
+)
 
 
 __all__ = [

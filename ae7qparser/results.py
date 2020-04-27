@@ -10,7 +10,22 @@ Released under the terms of the MIT license.
 from typing import Sequence
 from datetime import datetime
 
-from .tables import *
+from .tables import (
+    Table,
+    ConditionsTable,
+    CallHistoryTable,
+    TrusteeTable,
+    ApplicationsHistoryTable,
+    VanityApplicationsHistoryTable,
+    PendingApplicationsPredictionsTable,
+    CallsignPendingApplicationsPredictionsTable,
+    EventCallsignTable,
+    FrnHistoryTable,
+    LicenseeIdHistoryTable,
+    ApplicationActionHistoryTable,
+    ApplicationVanityCallsignsTable,
+    ApplicationAttachmentsTable,
+)
 from .utils import base_url
 
 

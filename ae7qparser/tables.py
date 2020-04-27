@@ -11,7 +11,22 @@ import collections.abc as abc
 from typing import Sequence
 
 
-from .rows import *
+from .rows import (
+    Row,
+    ConditionsRow,
+    CallHistoryRow,
+    TrusteeRow,
+    ApplicationsHistoryRow,
+    VanityApplicationsHistoryRow,
+    PendingApplicationsPredictionsRow,
+    CallsignPendingApplicationsPredictionsRow,
+    EventCallsignRow,
+    FrnHistoryRow,
+    LicenseeIdHistoryRow,
+    ApplicationActionHistoryRow,
+    ApplicationVanityCallsignsRow,
+    ApplicationAttachmentsRow,
+)
 
 
 __all__ = [

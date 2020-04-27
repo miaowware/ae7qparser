@@ -7,17 +7,26 @@ Released under the terms of the MIT license.
 """
 
 
-from typing import Sequence, Union, List
-import re
-from datetime import datetime
+from typing import Union
 
 import requests
-from bs4 import BeautifulSoup, element
+from bs4 import BeautifulSoup
 
-from .tables import *
-from .results import *
+from .results import (
+    Ae7qCallData,
+    Ae7qCanadianCallData,
+    Ae7qLicenseeData,
+    Ae7qFrnData,
+    Ae7qApplicationData,
+)
 from .utils import base_url, ca_pfx
-from .parse import *
+from .parse import (
+    _parse_tables,
+    _assign_call_tables,
+    _assign_frn_tables,
+    _assign_licensee_tables,
+    _assign_application_tables,
+)
 
 
 __all__ = [
