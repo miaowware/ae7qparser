@@ -7,7 +7,7 @@ Released under the terms of the MIT license.
 """
 
 import collections.abc as abc
-from typing import Sequence
+from typing import Sequence, Union
 
 
 __all__ = [
@@ -62,7 +62,7 @@ class Row(abc.Sequence):
     def __len__(self):
         return len(self._data)
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: Union[int, slice]):
         return self._data[index]
 
     def __iter__(self):

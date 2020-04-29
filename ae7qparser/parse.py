@@ -7,7 +7,7 @@ Released under the terms of the MIT license.
 """
 
 
-from typing import Sequence, Union, List
+from typing import Sequence, Union, List, Tuple
 import re
 from datetime import datetime
 
@@ -40,7 +40,7 @@ __all__ = [
 ]
 
 
-def _parse_tables(tables: Sequence[element.Tag]) -> List[List[List[Union[str, datetime]]]]:
+def _parse_tables(tables: Sequence[element.Tag]) -> List[List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]]]:
     # converts a list of html tables to a list of lists of text or datetimes
     parsed_tables = []
 
@@ -51,13 +51,13 @@ def _parse_tables(tables: Sequence[element.Tag]) -> List[List[List[Union[str, da
     return parsed_tables
 
 
-def _parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, datetime]]]:
+def _parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]]:
     # converts a table into rows of text or datetime
-    rows = []
-    remainder = []
+    rows: List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]] = []
+    remainder: List[Tuple[int, Union[str, datetime, Tuple[Union[str, datetime]]], int]] = []
 
     for tr in table:
-        row = []
+        row: List[Union[str, datetime, Tuple[Union[str, datetime]]]] = []
         next_remainder = []
 
         idx = 0
@@ -113,12 +113,17 @@ def _parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, date
 
     if rows[0][-1] == "Vanity callsign(s) applied for":
         # combine application rows and applied callsigns
-        new_rows = []
+        new_rows: List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]] = []
         for row in rows:
             if row[4] not in [x[4] for x in new_rows]:
+                matching_rows: List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]]
+                new_row: List[Union[str, datetime, Tuple[Union[str, datetime]]]]
+                new_cell: List[Union[str, datetime, Tuple[Union[str, datetime]]]]
+
                 matching_rows = [x for x in rows if x[4] == row[4]]
                 new_row = row[0:9]
                 new_cell = []
+
                 for r in matching_rows:
                     new_cell += [x for x in r[9:] if x != ""]
                 new_row.append(tuple(new_cell))
@@ -129,10 +134,10 @@ def _parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, date
     return rows
 
 
-def _get_cell_text(cell: element.Tag) -> Union[str, datetime]:
+def _get_cell_text(cell: element.Tag) -> Union[str, datetime, Tuple[Union[str, datetime]]]:
     # gets the (better-formatted) cell text. If in certain formats, it will convert to datetime.
     text = " ".join([" ".join(x.split()) for x in cell.stripped_strings])
-    out: Union[str, datetime]
+    out: Union[str, datetime, Tuple[Union[str, datetime]]]
 
     if re.fullmatch(r"\w{3} \d{4}-\d{2}-\d{2}", text):
         out = datetime.strptime(text, "%a %Y-%m-%d")
@@ -149,9 +154,9 @@ def _get_cell_text(cell: element.Tag) -> Union[str, datetime]:
     return out
 
 
-def _assign_call_tables(tables: List[List[List]]):
+def _assign_call_tables(tables: List[List[List]]) -> List[Table]:
     # create Table objects for a callsign query
-    out_tables = []
+    out_tables: List[Table] = []
     for table in tables:
         # ConditionsTable
         if len(table) == 1 and len(table[0]) == 1:
@@ -185,9 +190,9 @@ def _assign_call_tables(tables: List[List[List]]):
     return out_tables
 
 
-def _assign_licensee_tables(tables: List[List[List]]):
+def _assign_licensee_tables(tables: List[List[List]]) -> List[Table]:
     # create Table objects for a licensee ID query
-    out_tables = []
+    out_tables: List[Table] = []
     for table in tables:
         # LicenseeIdHistoryTable
         if len(table[0]) == 1 and len(table[1]) == 10 and table[1][0] == "Callsign":
@@ -208,9 +213,9 @@ def _assign_licensee_tables(tables: List[List[List]]):
     return out_tables
 
 
-def _assign_frn_tables(tables: List[List[List]]):
+def _assign_frn_tables(tables: List[List[List]]) -> List[Table]:
     # create Table objects for an FRN query
-    out_tables = []
+    out_tables: List[Table] = []
     for table in tables:
         # FrnHistoryTable
         if len(table[0]) == 1 and len(table[1]) == 10 and table[1][0] == "Callsign":
@@ -231,9 +236,9 @@ def _assign_frn_tables(tables: List[List[List]]):
     return out_tables
 
 
-def _assign_application_tables(tables: List[List[List]]):
+def _assign_application_tables(tables: List[List[List]]) -> List[Table]:
     # create Table objects for an application query
-    out_tables = []
+    out_tables: List[Table] = []
     for table in tables:
         # application data
         if table[0][0] == "Field Name":
