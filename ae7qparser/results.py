@@ -40,22 +40,23 @@ __all__ = [
 
 
 class Ae7qData:
-    """Ae7qData
-    ------
+    """Base class representing a query result from AE7Q.
 
-    Class representing Ae7qData.
-    Initialised with a sequence of Tables, a query, and a query_url.
+    :param tables: The tables to be stored in this object.
+    :type tables: Sequence[Table]
+    :param query: The query used to generate the data in this object.
+    :type query: str
+    :param query_url: The URL of the query.
+    :type query_url: str
 
-    Args:
-        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-        query_url (str): the URL of the query.
-
-    Attributes:
-        tables (tuple[Table]): the tables stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-        query_url (str): the URL of the query.
-        query_time (DateTime): the time at which the query was executed.
+    :var tables: The tables stored in this object.
+    :vartype tables: tuple[Table]
+    :var query: The query used to generate the data in this object.
+    :vartype query: str
+    :var query_url: The URL of the query.
+    :vartype query_url: str
+    :var query_time: The time at which the query was executed.
+    :vartype query_time: datetime
     """
     def __init__(self, tables: Sequence[Table], query: str, query_url: str):
         self.tables = tuple(tables)
@@ -72,28 +73,33 @@ class Ae7qData:
 
 
 class Ae7qCallData(Ae7qData):
-    """Ae7qCallData
-    ------
+    """Data container for the result of an AE7Q callsign query.
 
-    Data container for the result of an AE7Q callsign query.
-    Descended from Ae7qData.
+    Example query: http://ae7q.com/query/data/CallHistory.php?CALL=KA1AAA
 
-    Example URL for the query: http://ae7q.com/query/data/CallHistory.php?CALL={{ callsign }}
+    :param tables: The tables to be stored in the Ae7qData object.
+    :type tables: Sequence[Table]
+    :param query: The query used to generate the data in this Ae7qData object.
+    :type query: str
 
-    Args:
-        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-
-    Attributes:
-        tables (tuple[Table]): the tables stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-        query_url (str): the URL of the query.
-        query_time (DateTime): the time at which the query was executed.
-        conditions (ConditionsTable): table of conditions for the callsign.
-        call_history (CallHistoryTable): table of the callsign holder history.
-        trustee_history (TrusteeTable): table of any callsigns the callsign holder has been trustee of.
-        application_history (ApplicationsHistoryTable): table of applications for the callsign.
-        event_callsign_history (EventCallsignTable): table of event callsign holder history.
+    :var tables: The tables stored in this object.
+    :vartype tables: tuple[Table]
+    :var query: The query used to generate the data in this object.
+    :vartype query: str
+    :var query_url: The URL of the query.
+    :vartype query_url: str
+    :var query_time: The time at which the query was executed.
+    :vartype query_time: datetime
+    :var conditions: table of conditions for the callsign.
+    :vartype conditions: ConditionsTable, None
+    :var call_history: table of the callsign holder history.
+    :vartype call_history: CallHistoryTable, None
+    :var trustee_history: table of any callsigns the callsign holder has been trustee of.
+    :vartype trustee_history: TrusteeTable, None
+    :var application_history: table of applications for the callsign.
+    :vartype application_history: ApplicationsHistoryTable, None
+    :var event_callsign_history: table of event callsign holder history.
+    :vartype event_callsign_history: EventCallsignTable, None
     """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/CallHistory.php?CALL=" + query
@@ -122,35 +128,47 @@ class Ae7qCallData(Ae7qData):
 
 
 class Ae7qCanadianCallData(Ae7qData):
-    """Ae7qCanadianCallData
-    ------
+    """Data container for the result of an AE7Q callsign query, if the callsign is Canadian.
 
-    Data container for the result of an AE7Q callsign query, if the callsign is Canadian.
-    Descended from Ae7qData.
+    Example URL for the query: http://ae7q.com/query/data/CallHistory.php?CALL=VA1AAA
 
-    Example URL for the query: http://ae7q.com/query/data/CallHistory.php?CALL={{ callsign }}
+    :param tables: The tables to be stored in this object.
+    :type tables: Sequence[Table]
+    :param query: The query used to generate the data in this object.
+    :type query: str
 
-    Args:
-        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-
-    Attributes:
-        tables (tuple[Table]): the tables stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-        query_url (str): the URL of the query.
-        query_time (DateTime): the time at which the query was executed.
-        callsign_data (Table):
-        callsign: the callsign of the query result.
-        given_names: the given names of the callsign holder.
-        surname: the surname of the callsign holder.
-        address: the address of the callsign holder.
-        locality: the locality of the callsign holder.
-        province: the province of the callsign holder.
-        postal_code: the postal code of the callsign holder.
-        country: the country of the callsign holder.
-        region: the region of the callsign holder.
-        grid_square: the grid square of the callsign holder.
-        qualifications: the license qualifications of the callsign holder.
+    :var tables: The tables stored in this object.
+    :vartype tables: tuple[Table]
+    :var query: The query used to generate the data in this object.
+    :vartype query: str
+    :var query_url: The URL of the query.
+    :vartype query_url: str
+    :var query_time: The time at which the query was executed.
+    :vartype query_time: datetime
+    :var callsign_data: Table of data about the query result.
+    :vartype callsign_data: Table, None
+    :var callsign: the callsign of the query result.
+    :vartype callsign: str, None
+    :var given_names: the given names of the callsign holder.
+    :vartype given_names: str, None
+    :var surname: the surname of the callsign holder.
+    :vartype surname: str, None
+    :var address: the address of the callsign holder.
+    :vartype address: str, None
+    :var locality: the locality of the callsign holder.
+    :vartype locality: str, None
+    :var province: the province of the callsign holder.
+    :vartype province: str, None
+    :var postal_code: the postal code of the callsign holder.
+    :vartype postal_code: str, None
+    :var country: the country of the callsign holder.
+    :vartype country: str, None
+    :var region: the region of the callsign holder.
+    :vartype region: str, None
+    :var grid_square: the grid square of the callsign holder.
+    :vartype grid_square: str, None
+    :var qualifications: the license qualifications of the callsign holder.
+    :vartype qualifications: str, None
     """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/CallHistory.php?CALL=" + query
@@ -197,26 +215,29 @@ class Ae7qCanadianCallData(Ae7qData):
 
 
 class Ae7qLicenseeData(Ae7qData):
-    """Ae7qLicenseeData
-    ------
+    """Data container for the result of an AE7Q licensee ID query.
 
-    Data container for the result of an AE7Q licensee ID query.
-    Descended from Ae7qData.
+    Example URL for the query: http://ae7q.com/query/data/LicenseeIdHistory.php?ID=L00264867
 
-    Example URL for the query: http://ae7q.com/query/data/LicenseeIdHistory.php?ID={{ licensee ID }}
+    :param tables: The tables to be stored in this object.
+    :type tables: Sequence[Table]
+    :param query: The query used to generate the data in this object.
+    :type query: str
 
-    Args:
-        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-
-    Attributes:
-        tables (tuple[Table]): the tables stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-        query_url (str): the URL of the query.
-        query_time (DateTime): the time at which the query was executed.
-        licensee_id_history (LicenseeIdHistoryTable): table of license history for the licensee ID.
-        application_history (VanityApplicationsHistoryTable): table of applications for the licensee ID.
-        pending_applications (PendingApplicationsPredictionsTable): table of pending applications for the licensee ID.
+    :var tables: The tables stored in this object.
+    :vartype tables: tuple[Table]
+    :var query: The query used to generate the data in this object.
+    :vartype query: str
+    :var query_url: The URL of the query.
+    :vartype query_url: str
+    :var query_time: The time at which the query was executed.
+    :vartype query_time: datetime
+    :var licensee_id_history: table of license history for the licensee ID.
+    :vartype licensee_id_history: LicenseeIdHistoryTable, None
+    :var application_history: table of applications for the licensee ID.
+    :vartype application_data: VanityApplicationsHistoryTable, None
+    :var pending_applications: table of pending applications for the licensee ID.
+    :vartype pending_applications: PendingApplicationsPredictionsTable, None
     """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/LicenseeIdHistory.php?ID=" + query
@@ -236,26 +257,29 @@ class Ae7qLicenseeData(Ae7qData):
 
 
 class Ae7qFrnData(Ae7qData):
-    """Ae7qFrnData
-    ------
+    """Data container for the result of an AE7Q FRN query.
 
-    Data container for the result of an AE7Q FRN query.
-    Descended from Ae7qData.
+    Example URL for the query: http://ae7q.com/query/data/FrnHistory.php?FRN=0004003141
 
-    Example URL for the query: http://ae7q.com/query/data/FrnHistory.php?FRN={{ FRN }}
+    :param tables: The tables to be stored in this object.
+    :type tables: Sequence[Table]
+    :param query: The query used to generate the data in this object.
+    :type query: str
 
-    Args:
-        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-
-    Attributes:
-        tables (tuple[Table]): the tables stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-        query_url (str): the URL of the query.
-        query_time (DateTime): the time at which the query was executed.
-        frn_history (FrnHistoryTable): table of license history for the FRN.
-        application_history (VanityApplicationsHistoryTable): table of applications for the licensee ID.
-        pending_applications (PendingApplicationsPredictionsTable): table of pending applications for the licensee ID.
+    :var tables: The tables stored in this object.
+    :vartype tables: tuple[Table]
+    :var query: The query used to generate the data in this object.
+    :vartype query: str
+    :var query_url: The URL of the query.
+    :vartype query_url: str
+    :var query_time: The time at which the query was executed.
+    :vartype query_time: datetime
+    :var frn_history: table of license history for the FRN.
+    :vartype frn_history: FrnHistoryTable, None
+    :var application_history: table of applications for the FRN.
+    :vartype application_history: VanityApplicationsHistoryTable, None
+    :var pending_applications: table of pending applications for the FRN.
+    :vartype pending_applications: PendingApplicationsPredictionsTable, None
     """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/FrnHistory.php?FRN=" + query
@@ -275,68 +299,113 @@ class Ae7qFrnData(Ae7qData):
 
 
 class Ae7qApplicationData(Ae7qData):
-    """Ae7qApplicationData
-    ------
+    """Data container for the result of an AE7Q application query.
 
-    Data container for the result of an AE7Q application query.
-    Descended from Ae7qData.
+    Example URL for the query: http://ae7q.com/query/data/AppDetail.php?UFN=0008569299
 
-    Example URL for the query: http://ae7q.com/query/data/AppDetail.php?UFN={{ UFN }}
+    :param tables: The tables to be stored in this object.
+    :type tables: Sequence[Table]
+    :param query: The query used to generate the data in this object.
+    :type query: str
 
-    Args:
-        tables (Sequence[Table]): the tables to be stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-
-    Attributes:
-        tables (tuple[Table]): the tables stored in the Ae7qData object.
-        query (str): the query used to generate the data in this Ae7qData object.
-        query_url (str): the URL of the query.
-        query_time (DateTime): the time at which the query was executed.
-        application_data (Table): the application's data.
-        action_history (ApplicationActionHistoryTable): the application's action history.
-        vanity_callsigns (ApplicationVanityCallsignsTable): the application's applied callsigns.
-        attachments (ApplicationAttachmentsTable): the application's attachments.
-        frn: the applicant's FRN.
-        licensee_id: the applicant's FRN.
-        applicant_type: the applicant's type (e.g. club, individual).
-        entity_type: the applicant's entity type (e.g. Licensee).
-        entity_name: the applicant's entity name. This is sometimes the same as the other name fields.
-        attention: the applicant's ATTN line for their address. This is sometimes the trustee of the club.
-        first_name: the applicant's the applicant's first name.
-        middle_initial: the applicant's middle initial.
-        last_name: the applicant's last name.
-        name_suffix: the applicant's name suffix.
-        street_address: the applicant's street address.
-        po_box: the applicant's PO box number, if it exists.
-        locality: the applicant's locality.
-        county: the applicant's county.
-        state: the applicant's state.
-        postal_code: the applicant's postal code.
-        zip_location: the applicant's location (tuple of lattitude and longitude) based on ZIP code.
-        maidenhead: the applicant's grid square.
-        uls_geo_region: the applicant's geographic region (i.e. the number in the callsign based on address).
-        callsign: the applicant's callsign.
-        radio_service: the applicant's radio service code.
-        last_action_date: the application's last action date.
-        receipt_date: the application's receipt date.
-        entered_timestamp: the timestamp when the application was entered.
-        application_source: where the application was filed.
-        original_purpose: the application's original purpose.
-        application_purpose: the application's purpose.
-        result: the application's result.
-        fee_control_number: the application's fee control number. Probably blank, as no fees are collected now.
-        payment_date: the application's payment date. Probably blank, as no fees are collected now.
-        original_receipt: the application's original receipt date.
-        operator_class: the applicant's operator class.
-        operator_group: the applicant's operator group.
-        uls_group: the applicant's callsign group (A, B, C, or D)
-        new_sequential_callsign: whether the applicant is applying for a new sequential callsign.
-        vanity_type: the type of vanity application.
-        vanity_relationship: the relationship of the previous callsign holder to the applicant.
-        is_from_vec: whether the application was filed by a VEC.
-        is_trustee: whether the applicant is the trustee of the entity.
-        trustee_callsign: the applicant's trustee's callsign (if the entity is a club).
-        trustee_name: the applicant's trustee's name (if the entity is a club).
+    :var tables: The tables stored in this object.
+    :vartype tables: tuple[Table]
+    :var query: The query used to generate the data in this object.
+    :vartype query: str
+    :var query_url: The URL of the query.
+    :vartype query_url: str
+    :var query_time: The time at which the query was executed.
+    :vartype query_time: datetime
+    :var application_data: the application's data.
+    :vartype application_data: Table, None
+    :var action_history: the application's action history.
+    :vartype action_history: ApplicationActionHistoryTable, None
+    :var vanity_callsigns: the application's applied callsigns.
+    :vartype vanity_callsigns: ApplicationVanityCallsignsTable, None
+    :var attachments: the application's attachments.
+    :vartype attachments: ApplicationAttachmentsTable, None
+    :var frn: the applicant's FRN.
+    :vartype frn: str, None
+    :var licensee_id: the applicant's FRN.
+    :vartype licensee_id: str, None
+    :var applicant_type: the applicant's type (e.g. club, individual).
+    :vartype applicant_type: str, None
+    :var entity_type: the applicant's entity type (e.g. Licensee).
+    :vartype entity_type: str, None
+    :var entity_name: the applicant's entity name. This is sometimes the same as the other name fields.
+    :vartype entity_name: str, None
+    :var attention: the applicant's ATTN line for their address. This is sometimes the trustee of the club.
+    :vartype attention: str, None
+    :var first_name: the applicant's the applicant's first name.
+    :vartype first_name: str, None
+    :var middle_initial: the applicant's middle initial.
+    :vartype middle_initial: str, None
+    :var last_name: the applicant's last name.
+    :vartype last_name: str, None
+    :var name_suffix: the applicant's name suffix.
+    :vartype name_suffix: str, None
+    :var street_address: the applicant's street address.
+    :vartype street_address: str, None
+    :var po_box: the applicant's PO box number, if it exists.
+    :vartype po_box: str, None
+    :var locality: the applicant's locality.
+    :vartype locality: str, None
+    :var county: the applicant's county.
+    :vartype county: str, None
+    :var state: the applicant's state.
+    :vartype state: str, None
+    :var postal_code: the applicant's postal code.
+    :vartype postal_code: str, None
+    :var zip_location: the applicant's latitude and longitude based on ZIP code.
+    :vartype zip_location: Tuple[str], None
+    :var maidenhead: the applicant's grid square.
+    :vartype maidenhead: str, None
+    :var uls_geo_region: the applicant's geographic region (i.e. the number in the callsign based on address).
+    :vartype uls_geo_region: str, None
+    :var callsign: the applicant's callsign.
+    :vartype callsign: str, None
+    :var radio_service: the applicant's radio service code.
+    :vartype radio_service: str, None
+    :var last_action_date: the application's last action date.
+    :vartype last_action_date: datetime, None
+    :var receipt_date: the application's receipt date.
+    :vartype receipt_date: datetime, None
+    :var entered_timestamp: the timestamp when the application was entered.
+    :vartype entered_timestamp: datetime, None
+    :var application_source: where the application was filed.
+    :vartype application_source: str, None
+    :var original_purpose: the application's original purpose.
+    :vartype original_purpose: str, None
+    :var application_purpose: the application's purpose.
+    :vartype application_purpose: str, None
+    :var result: the application's result.
+    :vartype result: str, None
+    :var fee_control_number: the application's fee control number. Probably blank, as no fees are collected now.
+    :vartype fee_control_number: str, None
+    :var payment_date: the application's payment date. Probably blank, as no fees are collected now.
+    :vartype payment_date: datetime, None
+    :var original_receipt: the application's original receipt date.
+    :vartype original_receipt: datetime, None
+    :var operator_class: the applicant's operator class.
+    :vartype operator_class: str, None
+    :var operator_group: the applicant's operator group.
+    :vartype operator_group: str, None
+    :var uls_group: the applicant's callsign group (A, B, C, or D)
+    :vartype uls_group: str, None
+    :var new_sequential_callsign: whether the applicant is applying for a new sequential callsign.
+    :vartype new_sequential_callsign: str, None
+    :var vanity_type: the type of vanity application.
+    :vartype vanity_type: str, None
+    :var vanity_relationship: the relationship of the previous callsign holder to the applicant.
+    :vartype vanity_relationship: str, None
+    :var is_from_vec: whether the application was filed by a VEC.
+    :vartype is_from_vec: str, None
+    :var is_trustee: whether the applicant is the trustee of the entity.
+    :vartype is_trustee: str, None
+    :var trustee_callsign: the applicant's trustee's callsign (if the entity is a club).
+    :vartype trustee_callsign: str, None
+    :var trustee_name: the applicant's trustee's name (if the entity is a club).
+    :vartype trustee_name: str, None
     """
     def __init__(self, tables: Sequence[Table], query: str):
         url = base_url + "data/AppDetail.php?UFN=" + query

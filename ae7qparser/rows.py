@@ -29,25 +29,21 @@ __all__ = [
 
 
 class Row(abc.Sequence):
-    """Row
-    ------
+    """Base class representing an :class:`ae7qparser.tables.Table` row. The row's data can be accessed like a sequence.
 
-    Class representing a table Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :param row_data: the data to store in the row.
+    :type row_data: Sequence
     """
     def __init__(self, row_data: Sequence):
         self._data = tuple(row_data)
 
     @property
     def csv(self) -> str:
+        """Convert the row's data to semicolon-separated format.
+
+        :return: the row data, with cells separated by semicolons.
+        :rtype: str
+        """
         csv_data = []
         for cell in self._data:
             if isinstance(cell, list) or isinstance(cell, tuple):
@@ -70,22 +66,10 @@ class Row(abc.Sequence):
 
 
 class ConditionsRow(Row):
-    """ConditionsRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.ConditionsTable` row.
 
-    Class representing a ConditionsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        conditions (str)
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var conditions:
+    :vartype conditions: str
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -93,30 +77,18 @@ class ConditionsRow(Row):
 
 
 class CallHistoryRow(Row):
-    """CallHistoryRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.CallHistoryTable` row.
 
-    Class representing a CallHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        entity_name
-        applicant_type
-        operator_class
-        region_state
-        license_status
-        grant_date
-        effective_date
-        cancel_date
-        expire_date
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var entity_name:
+    :vartype entity_name: str
+    :var applicant_type:
+    :var operator_class:
+    :var region_state:
+    :var license_status:
+    :var grant_date:
+    :var effective_date:
+    :var cancel_date:
+    :var expire_date:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -132,30 +104,17 @@ class CallHistoryRow(Row):
 
 
 class TrusteeRow(Row):
-    """TrusteeRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.TrusteeTable` row.
 
-    Class representing a TrusteeTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        callsign
-        region_state
-        entity_name
-        applicant_type
-        license_status
-        grant_date
-        effective_date
-        cancel_date
-        expire_date
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var callsign:
+    :var region_state:
+    :var entity_name:
+    :var applicant_type:
+    :var license_status:
+    :var grant_date:
+    :var effective_date:
+    :var cancel_date:
+    :var expire_date:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -171,30 +130,18 @@ class TrusteeRow(Row):
 
 
 class ApplicationsHistoryRow(Row):
-    """ApplicationsHistoryRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.ApplicationsHistoryTable` row.
 
-    Class representing a ApplicationsHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        receipt_date
-        application_callsign
-        region_state
-        entity_name
-        uls_file_number: a tuple of the file number and the filing type as strings
-        application_purpose
-        payment_date
-        last_action_date
-        application_status
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var receipt_date:
+    :var application_callsign:
+    :var region_state:
+    :var entity_name:
+    :var uls_file_number:
+    :vartype uls_file_number: Tuple[str], None
+    :var application_purpose:
+    :var payment_date:
+    :var last_action_date:
+    :var application_status:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -211,31 +158,19 @@ class ApplicationsHistoryRow(Row):
 
 
 class VanityApplicationsHistoryRow(Row):
-    """VanityApplicationsHistoryRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.VanityApplicationsHistoryTable` row.
 
-    Class representing a VanityApplicationsHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        receipt_date
-        application_callsign
-        region_state
-        operator_class
-        uls_file_number: a tuple of the file number and the filing type as strings
-        application_purpose
-        payment_date
-        last_action_date
-        application_status
-        applied_callsigns
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var receipt_date:
+    :var application_callsign:
+    :var region_state:
+    :var operator_class:
+    :var uls_file_number:
+    :vartype uls_file_number: Tuple[str]
+    :var application_purpose:
+    :var payment_date:
+    :var last_action_date:
+    :var application_status:
+    :var applied_callsigns:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -253,31 +188,18 @@ class VanityApplicationsHistoryRow(Row):
 
 
 class PendingApplicationsPredictionsRow(Row):
-    """PendingApplicationsPredictionsRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.PendingApplicationsPredictionsTable` row.
 
-    Class representing a PendingApplicationsPredictionsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        receipt_date
-        process_date
-        applicant_callsign
-        region_state
-        operator_class
-        uls_file_number
-        vanity_type
-        sequential_number
-        vanity_callsign
-        prediction
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var receipt_date:
+    :var process_date:
+    :var applicant_callsign:
+    :var region_state:
+    :var operator_class:
+    :var uls_file_number:
+    :var vanity_type:
+    :var sequential_number:
+    :var vanity_callsign:
+    :var prediction:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -294,30 +216,17 @@ class PendingApplicationsPredictionsRow(Row):
 
 
 class CallsignPendingApplicationsPredictionsRow(Row):
-    """CallsignPendingApplicationsPredictionsRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.CallsignPendingApplicationsPredictionsTable` row.
 
-    Class representing a CallsignPendingApplicationsPredictionsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        receipt_date
-        process_date
-        applicant_callsign
-        operator_class
-        region_state
-        uls_file_number
-        vanity_type
-        sequential_number
-        prediction
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var receipt_date:
+    :var process_date:
+    :var applicant_callsign:
+    :var operator_class:
+    :var region_state:
+    :var uls_file_number:
+    :var vanity_type:
+    :var sequential_number:
+    :var prediction:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -333,26 +242,13 @@ class CallsignPendingApplicationsPredictionsRow(Row):
 
 
 class EventCallsignRow(Row):
-    """EventCallsignRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.EventCallsignTable` row.
 
-    Class representing a EventCallsignTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        start_date
-        end_date
-        callsign
-        entity_name
-        event_name
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var start_date:
+    :var end_date:
+    :var callsign:
+    :var entity_name:
+    :var event_name:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -364,31 +260,18 @@ class EventCallsignRow(Row):
 
 
 class FrnHistoryRow(Row):
-    """FrnHistoryRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.FrnHistoryTable` row.
 
-    Class representing a FrnHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        callsign
-        region_state
-        entity_name
-        applicant_type
-        operator_class
-        license_status
-        grant_date
-        effective_date
-        cancel_date
-        expire_date
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var callsign:
+    :var region_state:
+    :var entity_name:
+    :var applicant_type:
+    :var operator_class:
+    :var license_status:
+    :var grant_date:
+    :var effective_date:
+    :var cancel_date:
+    :var expire_date:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -405,31 +288,18 @@ class FrnHistoryRow(Row):
 
 
 class LicenseeIdHistoryRow(Row):
-    """LicenseeIdHistoryRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.LicenseeIdHistoryTable` row.
 
-    Class representing a LicenseeIdHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        callsign
-        region_state
-        entity_name
-        applicant_type
-        operator_class
-        license_status
-        grant_date
-        effective_date
-        cancel_date
-        expire_date
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var callsign:
+    :var region_state:
+    :var entity_name:
+    :var applicant_type:
+    :var operator_class:
+    :var license_status:
+    :var grant_date:
+    :var effective_date:
+    :var cancel_date:
+    :var expire_date:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -446,23 +316,10 @@ class LicenseeIdHistoryRow(Row):
 
 
 class ApplicationActionHistoryRow(Row):
-    """ApplicationActionHistoryRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.ApplicationActionHistoryTable` row.
 
-    Class representing a ApplicationActionHistoryTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        action_date
-        action_type
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var action_date:
+    :var action_type:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -471,24 +328,11 @@ class ApplicationActionHistoryRow(Row):
 
 
 class ApplicationVanityCallsignsRow(Row):
-    """ApplicationVanityCallsignsRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.ApplicationVanityCallsignsTable` row.
 
-    Class representing a ApplicationVanityCallsignsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        sequence_number
-        callsign
-        prediction
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var sequence_number:
+    :var callsign:
+    :var prediction:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)
@@ -498,25 +342,12 @@ class ApplicationVanityCallsignsRow(Row):
 
 
 class ApplicationAttachmentsRow(Row):
-    """ApplicationAttachmentsRow
-    ------
+    """Class representing an :class:`ae7qparser.tables.ApplicationAttachmentsTable` row.
 
-    Class representing a ApplicationAttachmentsTable Row.
-    Initialised with the row's data.
-
-    The row's data can be accessed like a sequence.
-
-    Args:
-        row_data (Sequence): the data to store in the row.
-
-    Attributes:
-        date
-        type
-        description
-        result
-
-    Properties:
-        csv (str): returns the row data, with cells separated by semicolons.
+    :var date:
+    :var type:
+    :var description:
+    :var result:
     """
     def __init__(self, row_data: Sequence):
         super().__init__(row_data)

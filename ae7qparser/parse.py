@@ -40,7 +40,7 @@ __all__ = [
 ]
 
 
-def _parse_tables(tables: Sequence[element.Tag]) -> List[List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]]]:
+def _parse_tables(tables: Sequence[element.Tag]) -> List[List[List[Union[str, datetime]]]]:
     # converts a list of html tables to a list of lists of text or datetimes
     parsed_tables = []
 
@@ -51,93 +51,86 @@ def _parse_tables(tables: Sequence[element.Tag]) -> List[List[List[Union[str, da
     return parsed_tables
 
 
-def _parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]]:
+def _parse_table_rows(table: Sequence[element.Tag]) -> List[List[Union[str, datetime]]]:
     # converts a table into rows of text or datetime
-    rows: List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]] = []
-    remainder: List[Tuple[int, Union[str, datetime, Tuple[Union[str, datetime]]], int]] = []
+    rows = []
 
     for tr in table:
-        row: List[Union[str, datetime, Tuple[Union[str, datetime]]]] = []
-        next_remainder = []
+        raw_row = []
 
-        idx = 0
         for td in tr.find_all(["th", "td"]):
-            # process rowspan > 1
-            while remainder and remainder[0][0] <= idx:
-                prev_idx, prev_cell, prev_rowspan = remainder.pop(0)
-                row.append(prev_cell)
-                if prev_rowspan > 1:
-                    next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
-                idx += 1
+            try:
+                rowspan = int(td.attrs.get("rowspan", 1))
+            except ValueError:  # catch %
+                rowspan = -1
+            try:
+                colspan = int(td.attrs.get("colspan",1))
+            except ValueError:  # catch %
+                colspan = -1
 
             cell = _get_cell_text(td)
-            try:
-                rowspan = int(td.attrs["rowspan"])
-            except (ValueError, KeyError):  # catch %, attr not found
-                rowspan = 1
-            try:
-                colspan = int(td.attrs["colspan"])
-            except (ValueError, KeyError):  # catch %, attr not found
-                colspan = 1
+            raw_row.append((cell, rowspan, colspan))
 
-            # handle colspan > 1
-            for x in range(colspan):
-                row.append(cell)
-                if rowspan > 1:
-                    next_remainder.append((idx, cell, rowspan - 1))
-                idx += 1
+            # if colspan == -1:
+            #     row = [cell]
 
-            # get rid of ditto marks by copying the contents from the previous row
-            for i, cell in enumerate(row):
-                if cell == "\"":
-                    row[i] = rows[-1][i]
+            # # handle colspan > 1
+            # for x in range(colspan):
+            #     row.append(cell)
+            #     if rowspan > 1:
+            #         next_remainder.append((idx, cell, rowspan - 1))
+            #     idx += 1
 
-        for prev_idx, prev_cell, prev_rowspan in remainder:
-            row.append(prev_cell)
-            if prev_rowspan > 1:
-                next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
+        print(raw_row)
+        # get rid of ditto marks by copying the contents from the previous row
+        # for i, cell in enumerate(raw_row):
+        #     if cell[0] == "\"":
+        #         raw_row[i] = (rows[-1][i][0], cell[1], cell[2])
 
-        rows.append(row)
-        remainder = next_remainder
+        rows.append(raw_row)
 
-    while remainder:
-        next_remainder = []
-        row = []
+        # for prev_idx, prev_cell, prev_rowspan in remainder:
+        #     row.append(prev_cell)
+        #     if prev_rowspan > 1:
+        #         next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
 
-        for prev_idx, prev_cell, prev_rowspan in remainder:
-            row.append(prev_cell)
-            if rowspan > 1:
-                next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
-        rows.append(row)
-        remainder = next_remainder
+        # rows.append(row)
+        # remainder = next_remainder
+
+    # while remainder:
+        # next_remainder = []
+        # row = []
+
+        # for prev_idx, prev_cell, prev_rowspan in remainder:
+        #     row.append(prev_cell)
+        #     if rowspan > 1:
+        #         next_remainder.append((prev_idx, prev_cell, prev_rowspan - 1))
+        # rows.append(row)
+        # remainder = next_remainder
 
     if rows[0][-1] == "Vanity callsign(s) applied for":
         # combine application rows and applied callsigns
-        new_rows: List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]] = []
-        for row in rows:
-            if row[4] not in [x[4] for x in new_rows]:
-                matching_rows: List[List[Union[str, datetime, Tuple[Union[str, datetime]]]]]
-                new_row: List[Union[str, datetime, Tuple[Union[str, datetime]]]]
-                new_cell: List[Union[str, datetime, Tuple[Union[str, datetime]]]]
-
-                matching_rows = [x for x in rows if x[4] == row[4]]
-                new_row = row[0:9]
+        new_rows = []
+        for row in rows:                                                # take all rows in the table
+            if row[4] not in [x[4] for x in new_rows]:                  # if the UFN isn't already in the new table
+                matching_rows = [x for x in rows if x[4] == row[4]]     # find all rows for that UFN
+                new_row = row[0:9]                                      # take all cells of the row except the last col
                 new_cell = []
 
-                for r in matching_rows:
-                    new_cell += [x for x in r[9:] if x != ""]
-                new_row.append(tuple(new_cell))
-                new_rows.append(new_row)
-        new_rows[0][-1] = "Vanity callsign(s) applied for"
+                for r in matching_rows:                                 # for reach row with that UFN,
+                    new_cell += [x for x in r[9:] if x != ""]           # add each callsign to the new cell (if not "")
+                new_row.append(tuple(new_cell))                         # convert the cell to a tuple and append to new row
+                new_rows.append(new_row)                                # add new row to new table
+        new_rows[0][-1] = "Vanity callsign(s) applied for"              # add the last column title
         return new_rows
 
     return rows
 
 
-def _get_cell_text(cell: element.Tag) -> Union[str, datetime, Tuple[Union[str, datetime]]]:
+def _get_cell_text(cell: element.Tag) -> Union[str, datetime]:
     # gets the (better-formatted) cell text. If in certain formats, it will convert to datetime.
     text = " ".join([" ".join(x.split()) for x in cell.stripped_strings])
-    out: Union[str, datetime, Tuple[Union[str, datetime]]]
+    out: Union[str, datetime]
 
     if re.fullmatch(r"\w{3} \d{4}-\d{2}-\d{2}", text):
         out = datetime.strptime(text, "%a %Y-%m-%d")

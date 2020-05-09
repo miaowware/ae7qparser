@@ -48,30 +48,17 @@ __all__ = [
 
 
 class Table(abc.Sequence):
-    """Table
-    ------
+    """Class representing a table of ae7q data. The table's data can be accessed like a sequence.
 
-    Class representing a Table.
-    Initialised with a nested sequence and (optionally) a row to use as column headers.
+    :param data: the data to be stored in the table.
+    :type data: Sequence[Sequence]
+    :param header_row: the row to use as column names. Defaults to first row. If -1, no row will be used.
+    :type header_row: int, Optional
 
-    The table's data can be accessed like a sequence.
-
-    Args:
-        data (Sequence[Sequence]): the data to be stored in the Table.
-        header_row (int): the row to store as column names. If not provided, the first row will be used. If -1, no row
-            will be used as column names.
-
-    Attributes:
-        col_names (Sequence): the names of each column in the table.
-        row_cls (Row): the class to use for the Table's rows. By default, the class is Row.
-
-    Properties:
-        csv (str): returns each row's data separated by semicolons, with each row separated by a newline. It includes
-            column names.
-        csv_pretty (str): returns each row's data, separated by pipes, with each row separated by a newline. It includes
-            column names.
+    :var col_names: the names of each column in the table.
+    :vartype col_names: :class:`ae7qparser.rows.Row`, None
     """
-    row_cls = Row  # Class attribute
+    _row_cls = Row  # Class attribute of rows contained by this class.
 
     def __init__(self, data: Sequence[Sequence], header_row: int = 0):
         if header_row == -1:
@@ -82,17 +69,19 @@ class Table(abc.Sequence):
 
         rows = []
         for row_data in data[header_row:]:
-            rows.append(self.row_cls(row_data))
+            rows.append(self._row_cls(row_data))
         self._data = tuple(rows)  # Making the data immutable
 
     @property
     def csv(self) -> str:
+        """Returns each row's data separated by semicolons, with each row separated by a newline, including column names."""
         csv = self.col_names.csv + "\n" if self.col_names is not None else ""
         csv += "\n".join([row.csv for row in self._data])
         return csv
 
     @property
     def csv_pretty(self) -> str:
+        """Returns each row's data, separated by pipes, with each row separated by a newline, including column names."""
         csv_out = ""
         csv = [self.col_names.csv.split(";")] if self.col_names is not None else []
         csv += [row.csv.split(";") for row in self._data]
@@ -125,52 +114,65 @@ class Table(abc.Sequence):
 
 
 class ConditionsTable(Table):
-    row_cls = ConditionsRow  # Class attribute
+    """Class representing a table of license or callsign conditions."""
+    _row_cls = ConditionsRow  # Class attribute
 
 
 class CallHistoryTable(Table):
-    row_cls = CallHistoryRow
+    """Class representing a table of callsign history."""
+    _row_cls = CallHistoryRow
 
 
 class TrusteeTable(Table):
-    row_cls = TrusteeRow
+    """Class representing a table of trustee history."""
+    _row_cls = TrusteeRow
 
 
 class ApplicationsHistoryTable(Table):
-    row_cls = ApplicationsHistoryRow
+    """Class representing a table of applications history."""
+    _row_cls = ApplicationsHistoryRow
 
 
 class VanityApplicationsHistoryTable(Table):
-    row_cls = VanityApplicationsHistoryRow
+    """Class representing a table of applications history with vanity callsigns listed."""
+    _row_cls = VanityApplicationsHistoryRow
 
 
 class PendingApplicationsPredictionsTable(Table):
-    row_cls = PendingApplicationsPredictionsRow
+    """Class representing a table of pending applications with predictions."""
+    _row_cls = PendingApplicationsPredictionsRow
 
 
 class CallsignPendingApplicationsPredictionsTable(Table):
-    row_cls = CallsignPendingApplicationsPredictionsRow
+    """Class representing a table of pending applications with predictions (on a callsign query)."""
+    _row_cls = CallsignPendingApplicationsPredictionsRow
 
 
 class EventCallsignTable(Table):
-    row_cls = EventCallsignRow
+    """Class representing a table of special event callsign history."""
+    _row_cls = EventCallsignRow
 
 
 class FrnHistoryTable(Table):
-    row_cls = FrnHistoryRow
+    """Class representing a table of FRN history."""
+    _row_cls = FrnHistoryRow
 
 
 class LicenseeIdHistoryTable(Table):
-    row_cls = LicenseeIdHistoryRow
+    """Class representing a table of Licensee ID history."""
+    _row_cls = LicenseeIdHistoryRow
 
 
 class ApplicationActionHistoryTable(Table):
-    row_cls = ApplicationActionHistoryRow
+    """Class representing a table of an application's action history."""
+    _row_cls = ApplicationActionHistoryRow
 
 
 class ApplicationVanityCallsignsTable(Table):
-    row_cls = ApplicationVanityCallsignsRow
+    """Class representing a table of an application's vanity callsigns."""
+    _row_cls = ApplicationVanityCallsignsRow
 
 
 class ApplicationAttachmentsTable(Table):
-    row_cls = ApplicationAttachmentsRow
+    """Class representing a table of an application's attachments."""
+    _row_cls = ApplicationAttachmentsRow
